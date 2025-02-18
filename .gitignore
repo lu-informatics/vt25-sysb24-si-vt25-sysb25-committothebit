@@ -1,0 +1,51 @@
+# Ignore compiled output
+bin/
+obj/
+AppPackages/
+
+# Ignore platform-specific files
+/Platforms/iOS/Pods/
+/Platforms/iOS/DerivedData/
+/Platforms/Android/.gradle/
+/Platforms/Android/.idea/
+/Platforms/Android/local.properties
+
+# Ignore user-specific files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore generated config and secrets
+appsettings.json
+appsettings.*.json  # Ignores environment-specific config files like appsettings.Development.json
+secrets.json
+
+# Ignore dependency-related files
+node_modules/
+packages/
+*.lock
+
+# Ignore logs and temp files
+*.log
+*.tlog
+*.cache
+*.tmp
+
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+desktop.ini
+
+# Ignore Rider/JetBrains files
+/.idea/
+/*.iml
+
+# Ignore debugging and profiling tools
+*.pdb
+*.opendb
+*.log
