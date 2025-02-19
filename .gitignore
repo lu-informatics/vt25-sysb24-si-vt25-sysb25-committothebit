@@ -1,4 +1,4 @@
-# Ignore compiled output
+it # Ignore compiled output
 bin/
 obj/
 AppPackages/
