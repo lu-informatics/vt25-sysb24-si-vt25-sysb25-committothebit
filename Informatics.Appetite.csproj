@@ -93,6 +93,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</Content>
+		<EmbeddedResource Include="appsettings.json" />
 	</ItemGroup>
 
 
