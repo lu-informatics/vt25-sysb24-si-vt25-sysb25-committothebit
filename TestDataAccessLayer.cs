@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -12,13 +13,22 @@ public class TestDataAccessLayer
     {
         try
         {
-            var basePath = Path.Combine(AppContext.BaseDirectory, "..", "Resources");
-            var configFilePath = Path.Combine(basePath, "appsettings.json");
+            var assembly = Assembly.GetExecutingAssembly();
+            string appsettingsFileName = "Informatics.Appetite.appsettings.json";
 
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile(configFilePath, optional: false, reloadOnChange: true)
-                .Build();
+            IConfigurationRoot configuration;
+            
+            using (var stream = assembly.GetManifestResourceStream(appsettingsFileName))
+            {
+                if (stream == null)
+                {
+                    throw new FileNotFoundException($"Embedded resource '{appsettingsFileName}' not found.");
+                }
+
+                configuration = new ConfigurationBuilder()
+                    .AddJsonStream(stream)
+                    .Build();
+            }
 
             string? connectionString = configuration.GetConnectionString("AppetiteDatabase");
 
@@ -35,6 +45,11 @@ public class TestDataAccessLayer
         catch (SqlException ex)
         {
             Console.WriteLine("An error occurred while connecting to the database: " + ex.Message);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An unexpected error occurred: " + ex.Message);
             throw;
         }
     }
@@ -54,7 +69,11 @@ public class TestDataAccessLayer
             {
                 while (reader.Read())
                 {
-                    ingredients.Add(reader.GetInt32(0) + ". " + reader.GetString(1) + " (" + reader.GetString(2)+ ")");
+                ingredients.Add(
+                    reader.GetInt32(0) + ". " +
+                    (reader.IsDBNull(1) ? "Unknown Name" : reader.GetString(1)) + " (" +
+                    (reader.IsDBNull(2) ? "Unknown Category" : reader.GetString(2)) + ")"
+                );
                 }
             }
         }
