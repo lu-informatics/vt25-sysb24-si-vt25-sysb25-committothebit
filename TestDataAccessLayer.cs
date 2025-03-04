@@ -69,7 +69,11 @@ public class TestDataAccessLayer
             {
                 while (reader.Read())
                 {
-                    ingredients.Add(reader.GetInt32(0) + ". " + reader.GetString(1) + " (" + reader.GetString(2)+ ")");
+                ingredients.Add(
+                    reader.GetInt32(0) + ". " +
+                    (reader.IsDBNull(1) ? "Unknown Name" : reader.GetString(1)) + " (" +
+                    (reader.IsDBNull(2) ? "Unknown Category" : reader.GetString(2)) + ")"
+                );
                 }
             }
         }
