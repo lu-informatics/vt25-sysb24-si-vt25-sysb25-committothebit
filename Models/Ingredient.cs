@@ -34,5 +34,7 @@ public class Ingredient
 
     public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 
+    public ICollection<UserIngredient> UserIngredients { get; set; } = new List<UserIngredient>();
+
 
 }
