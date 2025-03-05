@@ -77,16 +77,18 @@ class Program
         }
         
         connection.ChangeDatabase(_databaseName);
-        /*
+        
         if (!TableExists(connection, "Recipe"))
         {
             Console.WriteLine("Creating schema...");
+            GetFile();
             ExecuteSqlFile(connection, "Database/schema.sql");
         }
         else
         {
             Console.WriteLine("Schema already exists.");
         }
+        /*
 
         if (!HasSeedData(connection))
         {
@@ -98,6 +100,7 @@ class Program
             Console.WriteLine("Data already exists.");
         }
         */
+        
     }
 
     private static void ResetDatabase()
@@ -150,5 +153,14 @@ class Program
 
         string script = File.ReadAllText(filePath);
         ExecuteSql(connection, script);
+    }
+
+    private static string GetFile(){
+
+        string basePath = AppContext.BaseDirectory;
+        string schemaFilePath = Path.Combine(basePath, "..", "..", "Database", "schema.sql");
+        
+        Console.WriteLine(schemaFilePath);
+        return schemaFilePath;
     }
 }
