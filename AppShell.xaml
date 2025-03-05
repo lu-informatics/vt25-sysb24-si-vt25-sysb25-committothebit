@@ -10,7 +10,7 @@
         <ShellSection Title="Recipes">
             <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />
         </ShellSection>
-        <ShellSection Title="Ingredients">
+        <ShellSection Title="My Ingredients">
             <ShellContent ContentTemplate="{DataTemplate local:Pages.IngredientsPage}" />
         </ShellSection>
     </TabBar>

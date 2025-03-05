@@ -20,6 +20,7 @@ public class IngredientService : IIngredientService
         return await _context.Ingredients
             .AsNoTracking()
             .Include(i => i.RecipeIngredients)
+            .ThenInclude(ri => ri.Recipe)
             .ToListAsync();
     }
 

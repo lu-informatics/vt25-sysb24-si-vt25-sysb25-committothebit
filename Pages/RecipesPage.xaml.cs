@@ -1,5 +1,4 @@
 using Informatics.Appetite.ViewModels;
-using Microsoft.Maui.Controls;
 
 namespace Informatics.Appetite.Pages;
 

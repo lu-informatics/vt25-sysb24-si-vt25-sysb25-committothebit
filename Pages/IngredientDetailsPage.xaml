@@ -25,17 +25,6 @@
                            FontSize="16"
                            TextColor="Black"
                            BackgroundColor="#F7F7F7"/>
-                    <!-- Ingredient Quantity -->
-                    <Label Text="Quantity:"
-                           FontAttributes="Bold"
-                           FontSize="16"
-                           TextColor="Black"/>
-                    <Entry Text="{Binding Ingredient.Quantity, StringFormat='{0:F2}', Mode=TwoWay}"
-                           Keyboard="Numeric"
-                           Placeholder="Enter quantity"
-                           FontSize="16"
-                           TextColor="Black"
-                           BackgroundColor="#F7F7F7"/>
                     <!-- Ingredient Unit -->
                     <Label Text="Unit:"
                            FontAttributes="Bold"
