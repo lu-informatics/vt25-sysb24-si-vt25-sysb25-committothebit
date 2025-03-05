@@ -8,6 +8,7 @@ public interface IRecipeIngredientService
 {
     Task<IEnumerable<RecipeIngredient>> GetRecipeIngredientsAsync();
     Task<IEnumerable<Ingredient>> GetIngredientsByRecipeIdAsync(int recipeId);
+    Task<IEnumerable<RecipeIngredient>> GetRecipeIngredientsByRecipeIdAsync(int recipeId);
     Task<IEnumerable<Recipe>> GetRecipesByIngredientIdAsync(int ingredientId);
     Task<RecipeIngredient?> GetRecipeIngredientAsync(int recipeId, int ingredientId);
     Task<RecipeIngredient> SaveRecipeIngredientAsync(RecipeIngredient recipeIngredient);

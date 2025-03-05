@@ -35,6 +35,15 @@ public async Task<IEnumerable<Ingredient>> GetIngredientsByRecipeIdAsync(int rec
         .ToListAsync();
 }
 
+public async Task<IEnumerable<RecipeIngredient>> GetRecipeIngredientsByRecipeIdAsync(int recipeId)
+{
+    return await _context.RecipeIngredients
+        .AsNoTracking()
+        .Include(ri => ri.Ingredient)
+        .Where(ri => ri.RecipeId == recipeId)
+        .ToListAsync();
+}
+
 public async Task<IEnumerable<Recipe>> GetRecipesByIngredientIdAsync(int ingredientId)
 {
     return await _context.RecipeIngredients
