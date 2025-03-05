@@ -18,7 +18,7 @@ public class Recipe
     public string? Name { get; set; }
 
     [Column("instructions")]
-    public string? instructions { get; set; }
+    public string? Instructions { get; set; }
 
     [Column("cookingTime")]
     public int CookingTime { get; set; }
