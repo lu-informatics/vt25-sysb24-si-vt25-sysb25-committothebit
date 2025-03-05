@@ -2,23 +2,23 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Informatics.Appetite.Pages.IngredientsPage"
-             Title="Ingredients">
+             Title="My Ingredients">
 
     <VerticalStackLayout Padding="15" Spacing="10">
 
-            <!-- Add Ingredient Button -->
-            <Button Text="Add Ingredient"
-                    Command="{Binding OpenAddIngredientCommand}"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="#27AE60"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    CornerRadius="10"
-                    Padding="10"/>
+        <!-- Add Ingredient Button -->
+        <Button Text="Add Ingredient"
+                Command="{Binding OpenAddIngredientCommand}"
+                HorizontalOptions="Fill"
+                BackgroundColor="#27AE60"
+                TextColor="White"
+                FontAttributes="Bold"
+                CornerRadius="10"
+                Padding="10"/>
 
         <!-- CollectionView for Ingredient List -->
         <CollectionView x:Name="IngredientsList"
-                        ItemsSource="{Binding Ingredients}"
+                        ItemsSource="{Binding UserIngredients}"
                         SelectionMode="Single"
                         VerticalOptions="FillAndExpand"
                         ItemsUpdatingScrollMode="KeepItemsInView">
@@ -28,19 +28,33 @@
                     <Grid Padding="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" BackgroundColor="White">
                         <!-- Ingredient Name -->
                         <Label Grid.Row="0" Grid.Column="0"
-                                Text="{Binding Name}"
+                                Text="{Binding Ingredient.Name}"
                                 FontAttributes="Bold"
                                 FontSize="18"
                                 AutomationId="IngredientName"
                                 TextColor="Black"
                                 VerticalOptions="Center" />
-                        <!-- Ingredient Quantity -->
+                        <!-- Ingredient Category -->
                         <Label Grid.Row="1" Grid.Column="0"
-                                Text="{Binding Category, StringFormat='Category: {0}'}"
+                                Text="{Binding Ingredient.Category, StringFormat='Category: {0}'}"
                                 FontSize="16"
                                 AutomationId="IngredientCategory"
                                 TextColor="Gray"
                                 VerticalOptions="Center" />
+                     <!-- Ingredient Amount and Unit -->
+                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                                FontSize="16"
+                                AutomationId="IngredientAmount"
+                                TextColor="Black"
+                                VerticalOptions="Center"
+                                HorizontalOptions="End">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="Amount" />
+                                    <Binding Path="Ingredient.Unit" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
                         <!-- Tap Gesture for Selecting Ingredient -->
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenIngredientDetailsCommand,

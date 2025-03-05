@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Informatics.Appetite.Services;
 
-public class UserIngredientService: IUserIngredientService
+public class UserIngredientService : IUserIngredientService
 {
     private readonly RecipeContext _context;
 
