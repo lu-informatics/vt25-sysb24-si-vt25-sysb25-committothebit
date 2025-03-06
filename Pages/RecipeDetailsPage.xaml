@@ -17,7 +17,7 @@
             <!-- Vertical Layout for Description and Details -->
             <VerticalStackLayout Spacing="40">
                 <!-- Recipe Description -->
-                <Label Text="These are placeholder sentences for the recipe description. This is where we briefly describe how tasty this dish is (without telling some long-winded story about how grandma used to make this when we were sick as a child). If you see this, please tell Erik to implement the binding for recipe details. Bon appetit!"
+                <Label Text="{Binding Recipe.Description}"
                        FontAttributes="Bold"
                        FontSize="18"
                        TextColor="Black"
@@ -108,10 +108,39 @@
                            FontAttributes="Bold"
                            FontSize="24"
                            TextColor="Black"/>
-                    <Label Text="1. This is a placeholder instruction.&#x0a;2. This is another placeholder instruction.&#x0a;3. Implement this properly when the Recipe entity in the database has the new 'data' attribute with description and instruction as JSON.&#x0a;4. This should be a list, not a string with line breaks."
-                           FontSize="16"
-                           TextColor="Black"
-                           LineBreakMode="WordWrap"/>
+                    <CollectionView ItemsSource="{Binding Recipe.ParsedData.steps}"
+                                  SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5" ColumnDefinitions="Auto,*">
+                                    <Label Grid.Column="0" 
+                                           Text="{Binding Source={RelativeSource Self}, Path='BindingContext', StringFormat='{0}. '}"
+                                           FontSize="16"
+                                           TextColor="Black"
+                                           Margin="0,0,5,0"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding .}"
+                                           FontSize="16"
+                                           TextColor="Black"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout>
+                                <Label Text="No cooking instructions available."
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       FontSize="14"
+                                       FontAttributes="Italic"
+                                       TextColor="Gray"/>
+                                <Label Text="{Binding Recipe.Data}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       FontSize="12"
+                                       TextColor="Gray"/>
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
                 </VerticalStackLayout>
             </Grid>
         </VerticalStackLayout>
