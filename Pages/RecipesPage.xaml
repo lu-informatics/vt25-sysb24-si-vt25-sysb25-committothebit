@@ -23,7 +23,7 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10" Margin="5">
-                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
                             <!-- Recipe Name -->
                             <Label Grid.Row="0" Grid.Column="0"
                                    Text="{Binding Name}"
@@ -31,16 +31,28 @@
                                    FontSize="18"
                                    AutomationId="RecipeName"
                                    TextColor="Black"/>
-                            <!-- Recipe Description -->
+                            
+                            <!-- Recipe Description (Cook time, servings, difficulty) -->
                             <Label Grid.Row="1" Grid.Column="0"
                                    Text="{Binding Description}"
-                                   FontSize="16"
+                                   FontSize="14"
                                    AutomationId="RecipeDescription"
                                    TextColor="Gray"/>
+                            
+                            <!-- First cooking step as preview -->
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="{Binding StepsDescription}"
+                                   FontSize="14"
+                                   MaxLines="2"
+                                   LineBreakMode="TailTruncation"
+                                   AutomationId="RecipeSteps"
+                                   TextColor="Gray"/>
+                                
                             <!-- Tap Gesture for Selecting Recipe -->
                             <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
-                                                      CommandParameter="{Binding Id}"/>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
+                                    CommandParameter="{Binding Id}"/>
                             </Grid.GestureRecognizers>
                         </Grid>
                     </Border>
