@@ -26,42 +26,23 @@
                             FontSize="16"
                             TextColor="Black"
                             BackgroundColor="#F7F7F7"/>
-                    <!-- Ingredient Amount -->
+                    <!-- Ingredient Amount and Unit -->
                     <Label Text="Amount:"
                            FontAttributes="Bold"
                            FontSize="16"
                            TextColor="Black"/>
-                    <Entry Text="{Binding SelectedIngredient.Amount, Mode=TwoWay}"
-                           Placeholder="Enter amount"
-                           FontSize="16"
-                           TextColor="Black"
-                           Keyboard="Numeric"
-                           BackgroundColor="#F7F7F7"/>
-                    <!-- Ingredient Unit -->
-                    <Label Text="Unit:"
-                           FontAttributes="Bold"
-                           FontSize="16"
-                           TextColor="Black"/>
-                    <Entry Text="{Binding SelectedIngredient.Unit, Mode=TwoWay}"
-                           FontSize="16"
-                           TextColor="Black"
-                           IsReadOnly="True"
-                           BackgroundColor="#F7F7F7"/>
-                    <!-- Associated Recipes -->
-                    <Label Text="Associated Recipes:"
-                           FontAttributes="Bold"
-                           FontSize="16"
-                           TextColor="Black"/>
-                    <CollectionView ItemsSource="{Binding Recipes}"
-                                    SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Label Text="{Binding Name}"
-                                       FontSize="16"
-                                       TextColor="Black"/>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <HorizontalStackLayout Spacing="10">
+                        <Entry Text="{Binding SelectedIngredient.Amount, Mode=TwoWay}"
+                               Placeholder="Enter amount"
+                               FontSize="16"
+                               TextColor="Black"
+                               Keyboard="Numeric"
+                               BackgroundColor="#F7F7F7"/>
+                        <Label Text="{Binding SelectedIngredient.Unit}"
+                               FontAttributes="Bold"
+                               FontSize="16"
+                               TextColor="Black"/>
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
             </Border>
             <!-- Save Changes Button -->
