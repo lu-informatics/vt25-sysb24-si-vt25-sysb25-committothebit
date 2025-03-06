@@ -166,25 +166,23 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
-                            <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+                            <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer 
                                         Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
                                         CommandParameter="{Binding Id}" />
                                 </Grid.GestureRecognizers>
                                 <!-- Difficulty -->
-                                <Label Text="{Binding Difficulty}" TextColor="Black"/>
+                                <Label Text="{Binding Difficulty}" TextColor="Black" Grid.Column="0"/>
                                 <!-- Recipe Name -->
                                 <Label Text="{Binding Name}" TextColor="Black" Grid.Column="1"/>
                                 <!-- Category -->
                                 <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
                                 <!-- Diet -->
                                 <Label Text="{Binding Diet}" TextColor="Black" Grid.Column="3"/>
-                                <!-- Owner Image -->
-                                <Image Source="{Binding OwnerImage}" WidthRequest="30" HeightRequest="30" Grid.Column="4"/>
                                 <!-- More Options (three dots button) -->
                                 <Image Source="three_dots.png"
-                                       Grid.Column="5"
+                                       Grid.Column="4"
                                        WidthRequest="40"
                                        HeightRequest="40"
                                        HorizontalOptions="End"
