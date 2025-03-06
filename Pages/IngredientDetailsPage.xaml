@@ -15,25 +15,36 @@
                     Padding="15"
                     Margin="0,0,0,10">
                 <VerticalStackLayout Spacing="12">
-                    <!-- Ingredient Name -->
-                    <Label Text="Name:"
+                    <!-- Select Ingredient -->
+                    <Label Text="Select Ingredient:"
                            FontAttributes="Bold"
                            FontSize="16"
                            TextColor="Black"/>
-                    <Entry Text="{Binding Ingredient.Name, Mode=TwoWay}"
-                           Placeholder="Enter ingredient name"
+                    <Picker ItemsSource="{Binding Ingredients}"
+                            SelectedItem="{Binding SelectedIngredient, Mode=TwoWay}"
+                            ItemDisplayBinding="{Binding Name}"
+                            FontSize="16"
+                            TextColor="Black"
+                            BackgroundColor="#F7F7F7"/>
+                    <!-- Ingredient Amount -->
+                    <!-- <Label Text="Amount:"
+                           FontAttributes="Bold"
+                           FontSize="16"
+                           TextColor="Black"/>
+                    <Entry Text="{Binding SelectedIngredient.Amount, Mode=TwoWay}"
+                           Placeholder="Enter amount"
                            FontSize="16"
                            TextColor="Black"
-                           BackgroundColor="#F7F7F7"/>
+                           Keyboard="Numeric"
+                           BackgroundColor="#F7F7F7"/> -->
                     <!-- Ingredient Unit -->
                     <Label Text="Unit:"
                            FontAttributes="Bold"
                            FontSize="16"
                            TextColor="Black"/>
                     <Picker ItemsSource="{Binding Units}"
-                            SelectedItem="{Binding Ingredient.Unit, Mode=TwoWay}"
-                            Title="Select unit"
-                            ItemDisplayBinding="{Binding .}"
+                            SelectedItem="{Binding SelectedIngredient.Unit, Mode=TwoWay}"
+                            ItemDisplayBinding="{Binding Name}"
                             FontSize="16"
                             TextColor="Black"
                             BackgroundColor="#F7F7F7"/>
@@ -43,9 +54,8 @@
                            FontSize="16"
                            TextColor="Black"/>
                     <Picker ItemsSource="{Binding DietTags}"
-                            SelectedItem="{Binding Ingredient.DietTag, Mode=TwoWay}"
-                            Title="Select diet tag"
-                            ItemDisplayBinding="{Binding .}"
+                            SelectedItem="{Binding SelectedIngredient.DietTag, Mode=TwoWay}"
+                            ItemDisplayBinding="{Binding Name}"
                             FontSize="16"
                             TextColor="Black"
                             BackgroundColor="#F7F7F7"/>
