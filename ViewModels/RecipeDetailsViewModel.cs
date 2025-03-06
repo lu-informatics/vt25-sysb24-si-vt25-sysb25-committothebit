@@ -11,7 +11,7 @@ public partial class RecipeDetailsViewModel : BaseViewModel
     private readonly IRecipeService _recipeService;
     private readonly IRecipeIngredientService _recipeIngredientService;
 
-    public ObservableCollection<Ingredient> Ingredients { get; } = new();
+    public ObservableCollection<RecipeIngredient> RecipeIngredients { get; } = new();
 
     [ObservableProperty]
     private Recipe recipe;
@@ -44,11 +44,11 @@ public partial class RecipeDetailsViewModel : BaseViewModel
                 // Otherwise, load existing recipe
                 Recipe = await _recipeService.GetRecipeByIdAsync(recipeId) ?? new Recipe();
                 // Load associated ingredients
-                var ingredients = await _recipeIngredientService.GetIngredientsByRecipeIdAsync(recipeId);
-                Ingredients.Clear();
-                foreach (var ingredient in ingredients)
+                var recipeIngredients = await _recipeIngredientService.GetRecipeIngredientsByRecipeIdAsync(recipeId);
+                RecipeIngredients.Clear();
+                foreach (var recipeIngredient in recipeIngredients)
                 {
-                    Ingredients.Add(ingredient);
+                    RecipeIngredients.Add(recipeIngredient);
                 }
             }
         }

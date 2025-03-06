@@ -9,15 +9,15 @@ namespace Informatics.Appetite.ViewModels;
 
 public partial class IngredientsViewModel : BaseViewModel
 {
-    private readonly IIngredientService _ingredientService;
-    public ObservableCollection<Ingredient> Ingredients { get; }
-    public IngredientsViewModel(IIngredientService ingredientService)
+    private readonly IUserIngredientService _userIngredientService;
+    public ObservableCollection<UserIngredient> UserIngredients { get; }
+    public IngredientsViewModel(IUserIngredientService userIngredientService)
     {
-        _ingredientService = ingredientService;
-        Ingredients = new ObservableCollection<Ingredient>();
-        Title = "Ingredients";
+        _userIngredientService = userIngredientService;
+        UserIngredients = new ObservableCollection<UserIngredient>();
+        Title = "My Ingredients";
 
-        RefreshCommand = new AsyncRelayCommand(LoadIngredientsAsync);
+        RefreshCommand = new AsyncRelayCommand(LoadUserIngredientsAsync);
         OpenIngredientDetailsCommand = new RelayCommand<int>(OpenIngredientDetails);
         OpenAddIngredientCommand = new RelayCommand(OpenAddIngredient);
     }
@@ -26,23 +26,23 @@ public partial class IngredientsViewModel : BaseViewModel
     public IRelayCommand<int> OpenIngredientDetailsCommand { get; }
     public IRelayCommand OpenAddIngredientCommand { get; }
 
-    private async Task LoadIngredientsAsync()
+    private async Task LoadUserIngredientsAsync()
     {
         if (IsBusy) return;
 
         try
         {
             IsBusy = true;
-            var ingredients = await _ingredientService.GetIngredientsAsync();
-            Ingredients.Clear();
-            foreach(var ingredient in ingredients)
+            var userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(1);
+            UserIngredients.Clear();
+            foreach(var userIngredient in userIngredients)
             {
-                Ingredients.Add(ingredient);
+                UserIngredients.Add(userIngredient);
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading ingredients: {ex.Message}");
+            Console.WriteLine($"Error loading user ingredients: {ex.Message}");
         }
         finally
         {

@@ -46,6 +46,7 @@ public static class MauiProgram
 		builder.Services.AddScoped<IIngredientService, IngredientService>();
 		builder.Services.AddScoped<IRecipeService, RecipeService>();
 		builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
+		builder.Services.AddScoped<IUserIngredientService, UserIngredientService>();
 
 		//Use Singleton for ViewModels that manage ToListAsync
 		builder.Services.AddSingleton<IngredientsViewModel>();
