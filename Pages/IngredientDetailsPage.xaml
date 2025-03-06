@@ -27,7 +27,7 @@
                             TextColor="Black"
                             BackgroundColor="#F7F7F7"/>
                     <!-- Ingredient Amount -->
-                    <!-- <Label Text="Amount:"
+                    <Label Text="Amount:"
                            FontAttributes="Bold"
                            FontSize="16"
                            TextColor="Black"/>
@@ -36,29 +36,17 @@
                            FontSize="16"
                            TextColor="Black"
                            Keyboard="Numeric"
-                           BackgroundColor="#F7F7F7"/> -->
+                           BackgroundColor="#F7F7F7"/>
                     <!-- Ingredient Unit -->
                     <Label Text="Unit:"
                            FontAttributes="Bold"
                            FontSize="16"
                            TextColor="Black"/>
-                    <Picker ItemsSource="{Binding Units}"
-                            SelectedItem="{Binding SelectedIngredient.Unit, Mode=TwoWay}"
-                            ItemDisplayBinding="{Binding Name}"
-                            FontSize="16"
-                            TextColor="Black"
-                            BackgroundColor="#F7F7F7"/>
-                    <!-- Ingredient Diet Tag -->
-                    <Label Text="Diet Tag:"
-                           FontAttributes="Bold"
+                    <Entry Text="{Binding SelectedIngredient.Unit, Mode=TwoWay}"
                            FontSize="16"
-                           TextColor="Black"/>
-                    <Picker ItemsSource="{Binding DietTags}"
-                            SelectedItem="{Binding SelectedIngredient.DietTag, Mode=TwoWay}"
-                            ItemDisplayBinding="{Binding Name}"
-                            FontSize="16"
-                            TextColor="Black"
-                            BackgroundColor="#F7F7F7"/>
+                           TextColor="Black"
+                           IsReadOnly="True"
+                           BackgroundColor="#F7F7F7"/>
                     <!-- Associated Recipes -->
                     <Label Text="Associated Recipes:"
                            FontAttributes="Bold"

@@ -14,6 +14,9 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     public ObservableCollection<Ingredient> Ingredients { get; } = new();
     public ObservableCollection<Recipe> Recipes { get; } = new();
 
+    [ObservableProperty]
+    private Ingredient _selectedIngredient;
+
 
     public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService)
     {
