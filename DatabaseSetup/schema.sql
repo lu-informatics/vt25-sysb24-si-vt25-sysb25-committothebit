@@ -1,7 +1,7 @@
 CREATE TABLE Recipe (
    recipeId INT IDENTITY(1,1) PRIMARY KEY,
    name VARCHAR(255) NOT NULL,
-   instructions TEXT NOT NULL,
+   data NVARCHAR(MAX) CHECK (ISJSON(instructions) = 1),
    cookingTime INT CHECK (cookingTime > 0),
    servings INT CHECK (servings > 0),
    difficultyLevel VARCHAR(50) CHECK (difficultyLevel IN ('Easy', 'Medium', 'Hard'))
