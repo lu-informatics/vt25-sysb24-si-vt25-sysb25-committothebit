@@ -4,19 +4,23 @@ using Informatics.Appetite.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Informatics.Appetite.ViewModels;
 
 public partial class RecipesViewModel : BaseViewModel
 {
     private readonly IRecipeService _recipeService;
+    private string _searchText;
 
     public ObservableCollection<Recipe> Recipes { get; }
+    public ObservableCollection<Recipe> FilteredRecipes { get; }
 
     public RecipesViewModel(IRecipeService recipeService)
     {
         _recipeService = recipeService;
         Recipes = new ObservableCollection<Recipe>();
+        FilteredRecipes = new ObservableCollection<Recipe>();
         Title = "Recipes";
 
         RefreshCommand = new AsyncRelayCommand(LoadRecipesAsync);
@@ -27,6 +31,16 @@ public partial class RecipesViewModel : BaseViewModel
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
     public IRelayCommand OpenAddRecipeCommand { get; }
+
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            SetProperty(ref _searchText, value);
+            FilterRecipes();
+        }
+    }
 
     private async Task LoadRecipesAsync()
     {
@@ -41,6 +55,7 @@ public partial class RecipesViewModel : BaseViewModel
             {
                 Recipes.Add(recipe);
             }
+            FilterRecipes();
         }
         catch (Exception ex)
         {
@@ -49,6 +64,27 @@ public partial class RecipesViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    private void FilterRecipes()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText))
+        {
+            FilteredRecipes.Clear();
+            foreach (var recipe in Recipes)
+            {
+                FilteredRecipes.Add(recipe);
+            }
+        }
+        else
+        {
+            var filtered = Recipes.Where(r => r.Name.ToLower().Contains(SearchText.ToLower())).ToList();
+            FilteredRecipes.Clear();
+            foreach (var recipe in filtered)
+            {
+                FilteredRecipes.Add(recipe);
+            }
         }
     }
 
