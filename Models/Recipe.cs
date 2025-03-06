@@ -17,13 +17,15 @@ public class Recipe
     [MaxLength(255)]
     public string? Name { get; set; }
 
-    [Column("instructions")]
+    [Column("data")]
     public string? Instructions { get; set; }
 
     [Column("cookingTime")]
+    [Range(1, int.MaxValue)]
     public int CookingTime { get; set; }
 
     [Column("servings")]
+    [Range(1, int.MaxValue)]
     public int Servings { get; set; }
 
     [Column("difficultyLevel")]
