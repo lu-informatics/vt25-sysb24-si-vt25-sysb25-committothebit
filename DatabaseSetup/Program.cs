@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.IO;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
 using System.Data.Common;
 
@@ -58,7 +55,7 @@ class Program
     {
         var builder = new DbConnectionStringBuilder { ConnectionString = connectionString };
 
-        if (builder.TryGetValue("Database", out var databaseName))
+        if (builder.TryGetValue("Database", out var databaseName) && databaseName != null)
         {
             return databaseName.ToString();
         }
@@ -69,59 +66,63 @@ class Program
     private static void InitializeDatabase()
     {
         using var connection = new SqlConnection(_connectionString);
-        connection.Open();
         
-        if (!DatabaseExists(connection))
+        // Create database if it doesn't exist
+        var masterConnection = new SqlConnection(GetMasterConnectionString());
+        masterConnection.Open();
+        
+        if (!DatabaseExists(masterConnection))
         {
-            Console.WriteLine("Database does not exist. Creating...");
-            ExecuteSql(connection, $"CREATE DATABASE {_databaseName};");
+            CreateDatabase(masterConnection);
+            Console.WriteLine($"Database {_databaseName} created.");
+            
+            // Apply schema
+            connection.Open();
+            string schemaPath = GetFile();
+            ExecuteSqlFile(connection, schemaPath);
+            Console.WriteLine("Schema applied successfully.");
+            
+            // Apply seed data
+            string seedPath = GetSeedFile();
+            ExecuteSqlFile(connection, seedPath);
+            Console.WriteLine("Seed data inserted successfully.");
         }
         else
         {
-            Console.WriteLine($"Database: {_databaseName}, already exists.");
+            Console.WriteLine($"Database {_databaseName} already exists.");
         }
-        
-        connection.ChangeDatabase(_databaseName);
-        
-        if (!TableExists(connection, "Recipe"))
-        {
-            Console.WriteLine("Creating schema...");
-            GetFile();
-            ExecuteSqlFile(connection, "Database/schema.sql");
-        }
-        else
-        {
-            Console.WriteLine("Schema already exists.");
-        }
-        /*
-
-        if (!HasSeedData(connection))
-        {
-            Console.WriteLine("Seeding initial data...");
-            ExecuteSqlFile(connection, "Database/init_data.sql");
-        }
-        else
-        {
-            Console.WriteLine("Data already exists.");
-        }
-        */
-        
     }
 
     private static void ResetDatabase()
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-        connection.ChangeDatabase(_databaseName);
-
-        Console.WriteLine("Dropping existing tables...");
-        ExecuteSqlFile(connection, "Database/drop_tables.sql");
-
-        Console.WriteLine("Recreating schema...");
-        ExecuteSqlFile(connection, "Database/schema.sql");
-
-        Console.WriteLine("Seeding initial data...");
-        ExecuteSqlFile(connection, "Database/init_data.sql");
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            
+            // Create database if it doesn't exist
+            var masterConnection = new SqlConnection(GetMasterConnectionString());
+            masterConnection.Open();
+            
+            // Drop and recreate database
+            CreateDatabase(masterConnection);
+            Console.WriteLine($"Database {_databaseName} dropped and recreated.");
+            
+            // Apply schema
+            connection.Open();
+            string schemaPath = GetFile();
+            ExecuteSqlFile(connection, schemaPath);
+            Console.WriteLine("Schema applied successfully.");
+            
+            // Apply seed data
+            string seedPath = GetSeedFile();
+            ExecuteSqlFile(connection, seedPath);
+            Console.WriteLine("Seed data inserted successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            Environment.Exit(1);
+        }
     }
 
     private static bool DatabaseExists(SqlConnection connection)
@@ -130,21 +131,16 @@ class Program
         return command.ExecuteScalar() != null;
     }
 
-    private static bool TableExists(SqlConnection connection, string tableName)
-    {
-        using var command = new SqlCommand($"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tableName}'", connection);
-        return (int)command.ExecuteScalar() > 0;
-    }
-
-    private static bool HasSeedData(SqlConnection connection)
-    {
-        using var command = new SqlCommand("SELECT COUNT(*) FROM AppUser", connection);
-        return (int)command.ExecuteScalar() > 0;
-    }
-
     private static void ExecuteSql(SqlConnection connection, string sql)
     {
         using var command = new SqlCommand(sql, connection);
+        
+        // Only add parameters for non-DDL statements
+        if (sql.Contains("@dbName"))
+        {
+            command.Parameters.AddWithValue("@dbName", _databaseName);
+        }
+        
         command.ExecuteNonQuery();
     }
 
@@ -152,20 +148,99 @@ class Program
     {
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"SQL file not found: {filePath}");
-            return;
+            throw new FileNotFoundException($"SQL file not found: {filePath}");
         }
 
         string script = File.ReadAllText(filePath);
+        if (string.IsNullOrWhiteSpace(script))
+        {
+            throw new InvalidOperationException($"SQL file is empty: {filePath}");
+        }
+
         ExecuteSql(connection, script);
     }
 
-    private static string GetFile(){
-
-        string basePath = AppContext.BaseDirectory;
-        string schemaFilePath = Path.Combine(basePath, "..", "..", "Database", "schema.sql");
+    private static string GetProjectRoot()
+    {
+        string currentDir = AppContext.BaseDirectory;
+        DirectoryInfo? dir = new DirectoryInfo(currentDir);
         
-        Console.WriteLine(schemaFilePath);
+        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "Informatics.Appetite.sln")))
+        {
+            dir = dir.Parent;
+        }
+        
+        if (dir == null)
+        {
+            throw new DirectoryNotFoundException("Could not find solution root directory");
+        }
+        
+        return dir.FullName;
+    }
+
+    private static string GetFile()
+    {
+        string projectRoot = GetProjectRoot();
+        string schemaFilePath = Path.Combine(projectRoot, "DatabaseSetup", "Database", "schema.sql");
+        
+        if (!File.Exists(schemaFilePath))
+        {
+            throw new FileNotFoundException($"Schema file not found at: {schemaFilePath}");
+        }
+        
         return schemaFilePath;
+    }
+
+    private static string GetSeedFile()
+    {
+        string projectRoot = GetProjectRoot();
+        string seedFilePath = Path.Combine(projectRoot, "DatabaseSetup", "Database", "seed.sql");
+        
+        if (!File.Exists(seedFilePath))
+        {
+            throw new FileNotFoundException($"Seed file not found at: {seedFilePath}");
+        }
+        
+        return seedFilePath;
+    }
+
+    private static string GetMasterConnectionString()
+    {
+        var builder = new SqlConnectionStringBuilder(_connectionString)
+        {
+            InitialCatalog = "master"  // Connect to master database
+        };
+        return builder.ConnectionString;
+    }
+
+    private static void CreateDatabase(SqlConnection masterConnection)
+    {
+        // Validate database name for safety
+        if (string.IsNullOrEmpty(_databaseName) || _databaseName.Contains(";"))
+        {
+            throw new InvalidOperationException("Invalid database name");
+        }
+
+        // Drop database if it exists (safety check)
+        var dropSql = $@"
+            IF EXISTS (SELECT * FROM sys.databases WHERE name = '{_databaseName}')
+            BEGIN
+                ALTER DATABASE [{_databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                DROP DATABASE [{_databaseName}];
+            END";
+
+        // Create new database
+        var createSql = $"CREATE DATABASE [{_databaseName}];";
+
+        // Execute without parameters since DDL doesn't support them
+        using (var command = new SqlCommand(dropSql, masterConnection))
+        {
+            command.ExecuteNonQuery();
+        }
+
+        using (var command = new SqlCommand(createSql, masterConnection))
+        {
+            command.ExecuteNonQuery();
+        }
     }
 }
