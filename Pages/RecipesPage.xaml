@@ -11,11 +11,12 @@
             <HorizontalStackLayout Spacing="5"
                        HorizontalOptions="FillAndExpand">
 
-     <Frame BorderColor="Black" 
-       CornerRadius="5" 
-       Padding="0" 
+   <Frame BorderColor="gray" 
+       CornerRadius="6" 
+       Padding="3" 
        HasShadow="False"
-       HorizontalOptions="FillAndExpand">
+       HorizontalOptions="FillAndExpand"
+       WidthRequest="500"> <!-- Justera bredden här -->
     <Grid>
         <Grid.ColumnDefinitions>
             <!-- * gör att sökfältet tar upp så mycket plats som möjligt -->
@@ -29,7 +30,8 @@
                    HorizontalOptions="FillAndExpand"
                    Grid.Column="0"
                    PlaceholderColor="Gray"
-                   TextColor="Black" />
+                   TextColor="Black" 
+                   FontSize="18"/>
 
         <!-- Minska margin här så att den inte trycker ut sökfältet -->
         <Image Source="down.png"
@@ -42,8 +44,7 @@
     </Grid>
 </Frame>
 
-
-    <Grid Margin="200,0,0,0">
+    <Grid Margin="150,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -53,6 +54,7 @@
                 SelectedItem="{Binding SelectedCategory}"
                 WidthRequest="90"
                 FontSize="18"
+                TextColor="gray"
                 Grid.Column="0"/>
         <Image Source="down.png"
                WidthRequest="20"
@@ -63,7 +65,7 @@
     </Grid>
 
     <!-- DietTag -->
-    <Grid>
+    <Grid Margin="20,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -73,6 +75,7 @@
                 SelectedItem="{Binding SelectedDietTag}"
                 WidthRequest="90"
                 FontSize="18"
+                TextColor="gray"
                 Grid.Column="0"/>
         <Image Source="down.png"
                WidthRequest="20"
@@ -83,7 +86,7 @@
     </Grid>
 
     <!-- Difficulty -->
-    <Grid>
+    <Grid Margin="20,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -93,6 +96,7 @@
                 SelectedItem="{Binding SelectedDifficulty}"
                 WidthRequest="95"
                 FontSize="18"
+                TextColor="gray"
                 Grid.Column="0"/>
         <Image Source="down.png"
                WidthRequest="20"
@@ -103,7 +107,7 @@
     </Grid>
 
     <!-- Cooking time -->
-    <Grid>
+    <Grid Margin="20,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -113,6 +117,7 @@
                 SelectedItem="{Binding SelectedCookingTime}"
                 WidthRequest="120"
                 FontSize="18"
+                TextColor="gray"
                 Grid.Column="0"/>
         <Image Source="down.png"
                WidthRequest="20"
@@ -123,7 +128,7 @@
     </Grid>
 
     <!-- Ingredients at home -->
-    <Grid>
+    <Grid Margin="20,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -133,6 +138,7 @@
                 SelectedItem="{Binding SelectedIngredients}"
                 WidthRequest="190"
                 FontSize="18"
+                TextColor="gray"
                 Grid.Column="0"/>
         <Image Source="down.png"
                WidthRequest="20"
