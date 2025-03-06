@@ -91,10 +91,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Views/" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="Resources\*" />
     </ItemGroup>
 
