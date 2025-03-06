@@ -8,11 +8,16 @@ using System.Data.Common;
 class Program
 {
     private static string? _connectionString;
-    private static string _databaseName;
+    private static string? _databaseName;
     public static void Main(string[] args)
     {
         LoadConfiguration();
-        _databaseName = GetDatabaseName(_connectionString);
+        if (string.IsNullOrEmpty(_connectionString))
+        {
+            Console.WriteLine("No Connection String Found. Aborting!");
+            return;
+        }
+         _databaseName = GetDatabaseName(_connectionString);
         Console.WriteLine("Choose an option:");
         Console.WriteLine("1 - Initialize Database (Only creates if missing)");
         Console.WriteLine("2 - Reset Database (Drops and recreates)");
