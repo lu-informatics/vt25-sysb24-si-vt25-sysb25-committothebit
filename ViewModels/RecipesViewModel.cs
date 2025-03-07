@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+
 namespace Informatics.Appetite.ViewModels;
 
 public partial class RecipesViewModel : BaseViewModel
@@ -15,6 +16,8 @@ public partial class RecipesViewModel : BaseViewModel
 
     public ObservableCollection<Recipe> Recipes { get; }
     public ObservableCollection<Recipe> FilteredRecipes { get; }
+
+    public ObservableCollection<string> Difficulties { get; } = new ObservableCollection<string>();
 
     public RecipesViewModel(IRecipeService recipeService)
     {
@@ -26,6 +29,7 @@ public partial class RecipesViewModel : BaseViewModel
         RefreshCommand = new AsyncRelayCommand(LoadRecipesAsync);
         OpenRecipeDetailsCommand = new RelayCommand<int>(OpenRecipeDetails);
         OpenAddRecipeCommand = new RelayCommand(OpenAddRecipe);
+            _ = LoadDifficultyLevelsAsync(); 
     }
 
     public IAsyncRelayCommand RefreshCommand { get; }
@@ -87,6 +91,28 @@ public partial class RecipesViewModel : BaseViewModel
             }
         }
     }
+
+    private async Task LoadDifficultyLevelsAsync()
+{
+    var difficultyLevels = await _recipeService.GetDifficultyLevelsAsync();
+    Difficulties.Clear();
+    // Add a placeholder item
+    Difficulties.Add("Difficulty");
+    foreach (var level in difficultyLevels)
+    {
+        Difficulties.Add(level);
+    }
+    // Set the default selection to the placeholder.
+    
+}
+
+
+        private string _selectedDifficulty;
+        public string SelectedDifficulty
+        {
+            get => _selectedDifficulty;
+            set => SetProperty(ref _selectedDifficulty, value);
+        }
 
     private void OpenAddRecipe() => OpenRecipeDetails(-1);
 

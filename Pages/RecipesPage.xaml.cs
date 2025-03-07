@@ -10,6 +10,12 @@ public partial class RecipesPage : ContentPage
         BindingContext = viewModel;
     }
 
+    private void OnDifficultyIconTapped(object sender, EventArgs e)
+{
+    DifficultyPicker.Focus();
+}
+
+
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);

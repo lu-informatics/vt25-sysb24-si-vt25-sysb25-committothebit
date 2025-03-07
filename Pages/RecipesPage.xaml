@@ -84,27 +84,27 @@
                            Margin="0,0,5,0"
                            Grid.Column="1"/>
                 </Grid>
+                            
+                        <StackLayout Orientation="Horizontal" Spacing="5">
+                <Picker x:Name="DifficultyPicker"
+                        ItemsSource="{Binding Difficulties}"
+                        SelectedItem="{Binding SelectedDifficulty}"
+                        FontSize="18"
+                        TextColor="Gray"
+                        HorizontalOptions="FillAndExpand" />
+                <Image Source="down.png"
+                    WidthRequest="20"
+                    HeightRequest="20"
+                    VerticalOptions="Center"
+                    Margin="0,0,5,0">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDifficultyIconTapped"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </StackLayout>
 
-                <!-- Difficulty -->
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Picker Title="Difficulty"
-                            ItemsSource="{Binding Difficulties}"
-                            SelectedItem="{Binding SelectedDifficulty}"
-                            WidthRequest="95"
-                            FontSize="18"
-                            TextColor="gray"
-                            Grid.Column="0"/>
-                    <Image Source="down.png"
-                           WidthRequest="20"
-                           HeightRequest="20"
-                           VerticalOptions="Center"
-                           Margin="0,0,5,0"
-                           Grid.Column="1"/>
-                </Grid>
+
+
 
                 <!-- Cooking time -->
                 <Grid Margin="20,0,0,0">

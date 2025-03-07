@@ -70,6 +70,16 @@ public class RecipeService : IRecipeService
         return true;
     }
 
+    public async Task<List<string>> GetDifficultyLevelsAsync()
+{
+    return await _context.Recipes
+                         .Where(r => r.DifficultyLevel != null)
+                         .Select(r => r.DifficultyLevel!)
+                         .Distinct()
+                         .ToListAsync();
+}
+
+
     public async Task<bool> DeleteRecipeByNameAsync(string name)
     {
         var recipe = await GetRecipeByNameAsync(name);
