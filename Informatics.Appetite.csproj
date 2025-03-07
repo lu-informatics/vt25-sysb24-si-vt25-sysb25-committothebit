@@ -7,53 +7,41 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>Informatics.Appetite</AssemblyName>
-
+        
         <!-- Display name -->
         <ApplicationTitle>Informatics.Appetite</ApplicationTitle>
-
+        
         <!-- App Identifier -->
         <ApplicationId>com.companyname.informatics.appetite</ApplicationId>
-
+        
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
-
-        <!-- Target Framework -->
-        <TargetFramework>net9.0-maccatalyst</TargetFramework>
-
-        <!-- Mac Catalyst Settings -->
-        <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
-        <RuntimeIdentifier>maccatalyst-arm64</RuntimeIdentifier>
-        <CreatePackage>false</CreatePackage>
-        <CodesignKey>Mac Developer</CodesignKey>
-        <EnableCodeSigning>false</EnableCodeSigning>
-        <EnablePackageSigning>false</EnablePackageSigning>
-
-        <!-- Assembly generation settings -->
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     </PropertyGroup>
 
-    <!-- Windows-Specific Settings (Only applied on Windows) -->
+    <!-- Platform-specific settings for macOS -->
+    <PropertyGroup Condition="'$(OS)' == 'Unix'">
+        <TargetFramework>net9.0-maccatalyst</TargetFramework>
+        <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
+
+    <!-- Platform-specific settings for Windows -->
     <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+        <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
         <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-        <EnableWindowsTargeting>true</EnableWindowsTargeting>
-
+        
         <!-- Packaging setting - do not require MSIX install -->
         <WindowsPackageType>None</WindowsPackageType>
-        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-        <SelfContained>true</SelfContained>
+        <WindowsAppSDKSelfContained Condition="'$(IsUnpackaged)' == 'true'">true</WindowsAppSDKSelfContained>
+        <SelfContained Condition="'$(IsUnpackaged)' == 'true'">true</SelfContained>
     </PropertyGroup>
 
     <!-- Choose the default framework for the 'dotnet run' command based on OS -->
     <PropertyGroup Condition=" '$(TargetFrameworks)' == 'net9.0-maccatalyst' ">
         <RunCommandTargetFramework>net9.0-maccatalyst</RunCommandTargetFramework>
     </PropertyGroup>
-
+    
     <!-- Choose the default framework for the 'dotnet run' command based on OS -->
     <PropertyGroup Condition=" '$(TargetFrameworks)' == 'net9.0-windows10.0.19041.0' ">
         <RunCommandTargetFramework>net9.0-windows10.0.19041.0</RunCommandTargetFramework>
@@ -83,11 +71,12 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Views/" />
     </ItemGroup>
 
     <ItemGroup>
@@ -106,18 +95,6 @@
         <EmbeddedResource Include="appsettings.json" />
     </ItemGroup>
 
-    <!-- Add explicit compile items -->
-    <ItemGroup>
-        <Compile Include="*.cs" />
-        <Compile Include="Models/**/*.cs" />
-        <Compile Include="ViewModels/**/*.cs" />
-        <Compile Include="Views/**/*.cs" />
-        <Compile Include="Pages/**/*.cs" />
-        <Compile Include="Services/**/*.cs" />
-        <Compile Include="Contexts/**/*.cs" />
-        <Compile Include="Interfaces/**/*.cs" />
-        <Compile Include="Platforms/**/*.cs" />
-    </ItemGroup>
-</Project>
 
+</Project>
 
