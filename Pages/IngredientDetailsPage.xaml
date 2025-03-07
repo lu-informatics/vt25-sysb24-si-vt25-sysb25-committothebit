@@ -32,7 +32,7 @@
                            FontSize="16"
                            TextColor="Black"/>
                     <HorizontalStackLayout Spacing="10">
-                        <Entry Text="{Binding SelectedIngredient.Amount, Mode=TwoWay}"
+                        <Entry Text="{Binding Amount, Mode=TwoWay}"
                                Placeholder="Enter amount"
                                FontSize="16"
                                TextColor="Black"

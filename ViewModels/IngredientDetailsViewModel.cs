@@ -10,6 +10,7 @@ public partial class IngredientDetailsViewModel : BaseViewModel
 {
     private readonly IIngredientService _ingredientService;
     private readonly IRecipeIngredientService _recipeIngredientService;
+    private readonly IUserIngredientService _userIngredientService;
     
     public ObservableCollection<Ingredient> Ingredients { get; } = new();
     public ObservableCollection<Recipe> Recipes { get; } = new();
@@ -17,16 +18,20 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     [ObservableProperty]
     private Ingredient _selectedIngredient;
 
+    [ObservableProperty]
+    private double _amount;
 
-    public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService)
+
+    public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService, IUserIngredientService userIngredientService)
     {
         _ingredientService = ingredientService;
         _recipeIngredientService = recipeIngredientService;
+        _userIngredientService = userIngredientService;
         Ingredients = new ObservableCollection<Ingredient>();
         Recipes = new ObservableCollection<Recipe>();
 
         RefreshCommand = new AsyncRelayCommand(LoadIngredientsAsync);
-        //SaveIngredientCommand = new AsyncRelayCommand(SaveIngredientAsync);
+        SaveIngredientCommand = new AsyncRelayCommand(SaveUserIngredientAsync);
     }
 
     public IAsyncRelayCommand RefreshCommand { get; }
@@ -57,23 +62,29 @@ public partial class IngredientDetailsViewModel : BaseViewModel
         }
     }
 
-    // private async Task SaveIngredientAsync(Ingredient ingredient)
-    // {
-    //     if (IsBusy) return;
+    private async Task SaveUserIngredientAsync()
+    {
+        if (IsBusy) return;
 
-    //     try
-    //     {
-    //         IsBusy = true;
-    //         await _ingredientService.SaveIngredientAsync(ingredient);
-    //         await Shell.Current.GoToAsync(".."); // Navigate back
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine($"Error saving ingredient: {ex.Message}");
-    //     }
-    //     finally
-    //     {
-    //         IsBusy = false;
-    //     }
-    // }
+        try
+        {
+            IsBusy = true;
+            var userIngredient = new UserIngredient
+            {
+                AppUserId = 1, // Hardcoded user id
+                IngredientId = SelectedIngredient.Id,
+                Amount = Amount
+            };
+            await _userIngredientService.SaveUserIngredientAsync(userIngredient);
+            await Shell.Current.GoToAsync(".."); // Navigate back
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving user ingredient: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }
