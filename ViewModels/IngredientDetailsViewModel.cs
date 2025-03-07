@@ -19,7 +19,7 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     private Ingredient _selectedIngredient;
 
     [ObservableProperty]
-    private double _amount;
+    private string _amount;
 
 
     public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService, IUserIngredientService userIngredientService)
@@ -69,11 +69,18 @@ public partial class IngredientDetailsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+
+            if (!double.TryParse(Amount, out double parsedAmount))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Please enter a number", "OK");
+                return;
+            }
+
             var userIngredient = new UserIngredient
             {
                 AppUserId = 1, // Hardcoded user id
                 IngredientId = SelectedIngredient.Id,
-                Amount = Amount
+                Amount = parsedAmount
             };
             await _userIngredientService.SaveUserIngredientAsync(userIngredient);
             await Shell.Current.GoToAsync(".."); // Navigate back
