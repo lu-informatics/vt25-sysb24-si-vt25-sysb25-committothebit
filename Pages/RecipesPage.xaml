@@ -173,9 +173,9 @@
                                         CommandParameter="{Binding Id}" />
                                 </Grid.GestureRecognizers>
                                 <!-- Difficulty -->
-                                <Label Text="{Binding Difficulty}" TextColor="Black" Grid.Column="0"/>
+                                <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,0,0,0"/>
                                 <!-- Recipe Name -->
-                                <Label Text="{Binding Name}" TextColor="Black" Grid.Column="1"/>
+                                <Label Text="{Binding Name}" TextColor="Black" FontSize="18"  Grid.Column="1" Margin="220,0,0,0"/>
                                 <!-- Category -->
                                 <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
                                 <!-- Diet -->

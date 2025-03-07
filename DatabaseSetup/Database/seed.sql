@@ -37,7 +37,7 @@ INSERT INTO Ingredient (name, Category, Unit, DietTag) VALUES
 INSERT INTO Recipe (name, data, cookingTime, servings, difficultyLevel) VALUES
 -- Easy Recipes
 ('Classic Spaghetti Bolognese', 
-'{"steps": ["Brown the ground beef", "Sauté onions and garlic", "Add tomatoes and herbs", "Cook pasta", "Combine and serve"]}',
+'{"steps": ["1. Brown the ground beef", "Sauté onions and garlic", "Add tomatoes and herbs", "Cook pasta", "Combine and serve"]}',
 30, 4, 'Easy'),
 
 ('Vegetarian Stir-Fry',
