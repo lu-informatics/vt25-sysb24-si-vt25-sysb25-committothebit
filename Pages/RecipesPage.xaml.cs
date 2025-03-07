@@ -17,9 +17,10 @@ public partial class RecipesPage : ContentPage
 
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-    {
-        base.OnNavigatedTo(args);
-        var viewModel = BindingContext as RecipesViewModel;
-        viewModel?.RefreshCommand.Execute(null);
-    }
+{
+    base.OnNavigatedTo(args);
+    var viewModel = BindingContext as RecipesViewModel;
+    viewModel?.RefreshCommand.Execute(null);
+}
+
 }

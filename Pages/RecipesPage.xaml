@@ -85,7 +85,7 @@
                            Grid.Column="1"/>
                 </Grid>
                             
-                        <StackLayout Orientation="Horizontal" Spacing="5">
+                        <StackLayout Orientation="Horizontal" Spacing="5" >
                 <Picker x:Name="DifficultyPicker"
                         ItemsSource="{Binding Difficulties}"
                         SelectedItem="{Binding SelectedDifficulty}"

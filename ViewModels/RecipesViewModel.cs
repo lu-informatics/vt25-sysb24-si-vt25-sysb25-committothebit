@@ -47,72 +47,88 @@ public partial class RecipesViewModel : BaseViewModel
     }
 
     private async Task LoadRecipesAsync()
-    {
-        if (IsBusy) return;
-
-        try
-        {
-            IsBusy = true;
-            var recipes = await _recipeService.GetRecipesAsync();
-            Recipes.Clear();
-            foreach (var recipe in recipes)
-            {
-                Recipes.Add(recipe);
-            }
-            FilterRecipes();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading recipes: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    private void FilterRecipes()
-    {
-        if (string.IsNullOrWhiteSpace(SearchText))
-        {
-            FilteredRecipes.Clear();
-            foreach (var recipe in Recipes)
-            {
-                FilteredRecipes.Add(recipe);
-            }
-        }
-        else
-        {
-            var filtered = Recipes.Where(r => r.Name.ToLower().Contains(SearchText.ToLower())).ToList();
-            FilteredRecipes.Clear();
-            foreach (var recipe in filtered)
-            {
-                FilteredRecipes.Add(recipe);
-            }
-        }
-    }
-
-    private async Task LoadDifficultyLevelsAsync()
 {
-    var difficultyLevels = await _recipeService.GetDifficultyLevelsAsync();
-    Difficulties.Clear();
-    // Add a placeholder item
-    Difficulties.Add("Difficulty");
-    foreach (var level in difficultyLevels)
+    if (IsBusy) return;
+
+    try
     {
-        Difficulties.Add(level);
+        IsBusy = true;
+        var recipes = await _recipeService.GetRecipesAsync();
+        Recipes.Clear();
+        foreach (var recipe in recipes)
+        {
+            Recipes.Add(recipe);
+        }
+        // Update the filtered list after loading
+        FilterRecipes();
     }
-    // Set the default selection to the placeholder.
-    
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error loading recipes: {ex.Message}");
+    }
+    finally
+    {
+        IsBusy = false;
+    }
 }
 
 
-        private string _selectedDifficulty;
+    private void FilterRecipes()
+{
+    if (string.IsNullOrWhiteSpace(SearchText) && 
+        (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty"))
+    {
+        FilteredRecipes.Clear();
+        foreach (var recipe in Recipes)
+        {
+            FilteredRecipes.Add(recipe);
+        }
+        return;
+    }
+
+    var filtered = Recipes.Where(r =>
+         (string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower()))
+         && (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
+             (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase)))
+    ).ToList();
+
+    FilteredRecipes.Clear();
+    foreach (var recipe in filtered)
+    {
+        FilteredRecipes.Add(recipe);
+    }
+}
+
+
+    private async Task LoadDifficultyLevelsAsync()
+    {
+        var difficultyLevels = await _recipeService.GetDifficultyLevelsAsync();
+        Difficulties.Clear();
+        // Add a placeholder item
+        Difficulties.Add("Difficulty");
+        foreach (var level in difficultyLevels)
+        {
+            Difficulties.Add(level);
+        }
+        // Explicitly set the default selection
+        SelectedDifficulty = "Difficulty";
+    }
+
+
+
+       private string _selectedDifficulty = "Difficulty";
         public string SelectedDifficulty
         {
             get => _selectedDifficulty;
-            set => SetProperty(ref _selectedDifficulty, value);
+            set
+            {
+        if (SetProperty(ref _selectedDifficulty, value))
+        {
+            FilterRecipes();
         }
+    }
+}
+
 
     private void OpenAddRecipe() => OpenRecipeDetails(-1);
 
