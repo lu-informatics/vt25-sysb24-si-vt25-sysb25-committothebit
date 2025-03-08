@@ -18,6 +18,7 @@ public interface IRecipeService
     Task<bool> DeleteRecipeByIdAsync(int id);
     Task<bool> DeleteRecipeByNameAsync(string name);
     Task<List<string>> GetDifficultyLevelsAsync();
+    Task<List<string>> GetCookingTimesAsync();
 }
 
    

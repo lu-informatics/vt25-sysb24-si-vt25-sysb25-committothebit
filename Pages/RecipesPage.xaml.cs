@@ -14,6 +14,11 @@ public partial class RecipesPage : ContentPage
 {
     DifficultyPicker.Focus();
 }
+     private void OnCookingTimeIconTapped(object sender, EventArgs e)
+{
+   CookingTimePicker.Focus();
+}
+
 
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)

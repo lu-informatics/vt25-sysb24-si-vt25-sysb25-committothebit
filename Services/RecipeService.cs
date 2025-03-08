@@ -79,6 +79,16 @@ public class RecipeService : IRecipeService
                          .ToListAsync();
 }
 
+    public async Task<List<string>> GetCookingTimesAsync()
+{
+    return await _context.Recipes
+                         .Select(r => r.CookingTime.ToString())
+                         .Distinct()
+                         .OrderBy(time => time)
+                         .ToListAsync();
+}
+
+
 
     public async Task<bool> DeleteRecipeByNameAsync(string name)
     {

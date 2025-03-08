@@ -18,6 +18,37 @@ public partial class RecipesViewModel : BaseViewModel
     public ObservableCollection<Recipe> FilteredRecipes { get; }
 
     public ObservableCollection<string> Difficulties { get; } = new ObservableCollection<string>();
+    public ObservableCollection<string> CookingTimes { get; } = new ObservableCollection<string>();
+
+    private string _selectedDifficulty = "Difficulty";
+    public string SelectedDifficulty
+    {
+        get => _selectedDifficulty;
+        set
+        {
+            if (SetProperty(ref _selectedDifficulty, value))
+            {
+                FilterRecipes();
+            }
+        }
+    }
+
+    private string _selectedCookingTime = "Cooking time";
+    public string SelectedCookingTime
+    {
+        get => _selectedCookingTime;
+        set
+        {
+            if (SetProperty(ref _selectedCookingTime, value))
+            {
+                FilterRecipes();
+            }
+        }
+    }
+
+    public IAsyncRelayCommand RefreshCommand { get; }
+    public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
+    public IRelayCommand OpenAddRecipeCommand { get; }
 
     public RecipesViewModel(IRecipeService recipeService)
     {
@@ -29,13 +60,87 @@ public partial class RecipesViewModel : BaseViewModel
         RefreshCommand = new AsyncRelayCommand(LoadRecipesAsync);
         OpenRecipeDetailsCommand = new RelayCommand<int>(OpenRecipeDetails);
         OpenAddRecipeCommand = new RelayCommand(OpenAddRecipe);
-            _ = LoadDifficultyLevelsAsync(); 
+        
+        _ = LoadDifficultyLevelsAsync();
+        _ = LoadCookingTimesAsync();
     }
 
-    public IAsyncRelayCommand RefreshCommand { get; }
-    public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
-    public IRelayCommand OpenAddRecipeCommand { get; }
+    private async Task LoadRecipesAsync()
+    {
+        if (IsBusy) return;
+        try
+        {
+            IsBusy = true;
+            var recipes = await _recipeService.GetRecipesAsync();
+            Recipes.Clear();
+            foreach (var recipe in recipes)
+            {
+                Recipes.Add(recipe);
+            }
+            FilterRecipes();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading recipes: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
+    private void FilterRecipes()
+    {
+        if (string.IsNullOrWhiteSpace(SearchText) &&
+            (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty") &&
+            (string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time"))
+        {
+            FilteredRecipes.Clear();
+            foreach (var recipe in Recipes)
+            {
+                FilteredRecipes.Add(recipe);
+            }
+            return;
+        }
+
+        var filtered = Recipes.Where(r =>
+             (string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower())) &&
+             (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
+                 (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase))) &&
+             (string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time" ||
+                 r.CookingTime.ToString() == SelectedCookingTime)
+        ).ToList();
+
+        FilteredRecipes.Clear();
+        foreach (var recipe in filtered)
+        {
+            FilteredRecipes.Add(recipe);
+        }
+    }
+
+    private async Task LoadDifficultyLevelsAsync()
+    {
+        var difficultyLevels = await _recipeService.GetDifficultyLevelsAsync();
+        Difficulties.Clear();
+        Difficulties.Add("Difficulty");
+        foreach (var level in difficultyLevels)
+        {
+            Difficulties.Add(level);
+        }
+        SelectedDifficulty = "Difficulty";
+    }
+
+    private async Task LoadCookingTimesAsync()
+    {
+        var cookingTimes = await _recipeService.GetCookingTimesAsync();
+        CookingTimes.Clear();
+        CookingTimes.Add("Cooking time");
+        foreach (var time in cookingTimes)
+        {
+            CookingTimes.Add(time);
+        }
+        SelectedCookingTime = "Cooking time";
+    }
     public string SearchText
     {
         get => _searchText;
@@ -45,90 +150,6 @@ public partial class RecipesViewModel : BaseViewModel
             FilterRecipes();
         }
     }
-
-    private async Task LoadRecipesAsync()
-{
-    if (IsBusy) return;
-
-    try
-    {
-        IsBusy = true;
-        var recipes = await _recipeService.GetRecipesAsync();
-        Recipes.Clear();
-        foreach (var recipe in recipes)
-        {
-            Recipes.Add(recipe);
-        }
-        // Update the filtered list after loading
-        FilterRecipes();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error loading recipes: {ex.Message}");
-    }
-    finally
-    {
-        IsBusy = false;
-    }
-}
-
-
-    private void FilterRecipes()
-{
-    if (string.IsNullOrWhiteSpace(SearchText) && 
-        (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty"))
-    {
-        FilteredRecipes.Clear();
-        foreach (var recipe in Recipes)
-        {
-            FilteredRecipes.Add(recipe);
-        }
-        return;
-    }
-
-    var filtered = Recipes.Where(r =>
-         (string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower()))
-         && (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
-             (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase)))
-    ).ToList();
-
-    FilteredRecipes.Clear();
-    foreach (var recipe in filtered)
-    {
-        FilteredRecipes.Add(recipe);
-    }
-}
-
-
-    private async Task LoadDifficultyLevelsAsync()
-    {
-        var difficultyLevels = await _recipeService.GetDifficultyLevelsAsync();
-        Difficulties.Clear();
-        // Add a placeholder item
-        Difficulties.Add("Difficulty");
-        foreach (var level in difficultyLevels)
-        {
-            Difficulties.Add(level);
-        }
-        // Explicitly set the default selection
-        SelectedDifficulty = "Difficulty";
-    }
-
-
-
-       private string _selectedDifficulty = "Difficulty";
-        public string SelectedDifficulty
-        {
-            get => _selectedDifficulty;
-            set
-            {
-        if (SetProperty(ref _selectedDifficulty, value))
-        {
-            FilterRecipes();
-        }
-    }
-}
-
 
     private void OpenAddRecipe() => OpenRecipeDetails(-1);
 

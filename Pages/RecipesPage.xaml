@@ -89,6 +89,8 @@
                 <Picker x:Name="DifficultyPicker"
                         ItemsSource="{Binding Difficulties}"
                         SelectedItem="{Binding SelectedDifficulty}"
+                        ItemDisplayBinding="{Binding .}"
+                        WidthRequest="90"
                         FontSize="18"
                         TextColor="Gray"
                         HorizontalOptions="FillAndExpand" />
@@ -103,29 +105,26 @@
                 </Image>
             </StackLayout>
 
+                   <StackLayout Orientation="Horizontal" Spacing="5">
+       <Picker x:Name="CookingTimePicker"
+               ItemsSource="{Binding CookingTimes}"
+               SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
+                ItemDisplayBinding="{Binding .}"
+                WidthRequest="90"
+               FontSize="18"
+               TextColor="Gray"
+               HorizontalOptions="FillAndExpand" />
+       <Image Source="down.png"
+           WidthRequest="20"
+           HeightRequest="20"
+           VerticalOptions="Center"
+           Margin="0,0,5,0">
+           <Image.GestureRecognizers>
+               <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
+           </Image.GestureRecognizers>
+       </Image>
+   </StackLayout>
 
-
-
-                <!-- Cooking time -->
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Picker Title="Cooking time"
-                            ItemsSource="{Binding CookingTimes}"
-                            SelectedItem="{Binding SelectedCookingTime}"
-                            WidthRequest="120"
-                            FontSize="18"
-                            TextColor="gray"
-                            Grid.Column="0"/>
-                    <Image Source="down.png"
-                           WidthRequest="20"
-                           HeightRequest="20"
-                           VerticalOptions="Center"
-                           Margin="0,0,5,0"
-                           Grid.Column="1"/>
-                </Grid>
 
                 <!-- Ingredients at home -->
                 <Grid Margin="20,0,0,0">
