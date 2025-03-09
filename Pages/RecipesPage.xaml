@@ -44,25 +44,26 @@
                     </Grid>
                 </Frame>
 
-                <Grid Margin="150,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Picker Title="Category"
-                            ItemsSource="{Binding Categories}"
-                            SelectedItem="{Binding SelectedCategory}"
-                            WidthRequest="90"
-                            FontSize="18"
-                            TextColor="gray"
-                            Grid.Column="0"/>
-                    <Image Source="down.png"
-                           WidthRequest="20"
-                           HeightRequest="20"
-                           VerticalOptions="Center"
-                           Margin="0,0,5,0"
-                           Grid.Column="1"/>
-                </Grid>
+                <StackLayout Orientation="Horizontal" Spacing="5">
+    <Picker x:Name="CategoryPicker"
+            ItemsSource="{Binding Categories}"
+            SelectedItem="{Binding SelectedCategory}"
+            ItemDisplayBinding="{Binding .}"
+            WidthRequest="90"
+            FontSize="18"
+            TextColor="Gray"
+            HorizontalOptions="FillAndExpand" />
+    <Image Source="down.png"
+           WidthRequest="20"
+           HeightRequest="20"
+           VerticalOptions="Center"
+           Margin="0,0,5,0">
+        <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnCategoryIconTapped"/>
+        </Image.GestureRecognizers>
+    </Image>
+</StackLayout>
+
 
                 <!-- DietTag -->
                 <StackLayout Orientation="Horizontal" Spacing="5">
@@ -135,7 +136,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Picker Title="Ingredients at home"
+                    <Picker Title="Recipes with your ingredients"
                             ItemsSource="{Binding Ingredients}"
                             SelectedItem="{Binding SelectedIngredients}"
                             WidthRequest="190"

@@ -98,6 +98,16 @@ public class RecipeService : IRecipeService
             return dietTags;
         }
 
+    public async Task<List<string>> GetCategoriesAsync()
+{
+    // This will pull categories from the ingredients that are associated with recipes.
+    var categories = await _context.RecipeIngredients
+         .Include(ri => ri.Ingredient)
+         .Select(ri => ri.Ingredient.Category)
+         .Distinct()
+         .ToListAsync();
+    return categories;
+}
 
 
     public async Task<bool> DeleteRecipeByNameAsync(string name)

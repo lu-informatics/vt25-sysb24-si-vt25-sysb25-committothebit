@@ -21,6 +21,9 @@ public interface IRecipeService
     Task<List<string>> GetCookingTimesAsync();
 
     Task<List<string>> GetDietTagsAsync();
+
+    Task<List<string>> GetCategoriesAsync();
+
 }
 
    

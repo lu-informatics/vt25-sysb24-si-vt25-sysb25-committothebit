@@ -22,6 +22,8 @@ public partial class RecipesViewModel : BaseViewModel
 
     public ObservableCollection<string> DietTags { get; } = new ObservableCollection<string>();
 
+    public ObservableCollection<string> Categories { get; } = new ObservableCollection<string>();
+
     private string _selectedDifficulty = "Difficulty";
     public string SelectedDifficulty
     {
@@ -47,7 +49,18 @@ public partial class RecipesViewModel : BaseViewModel
             }
         }
     }
-
+    private string _selectedCategory = "Category";
+public string SelectedCategory
+{
+    get => _selectedCategory;
+    set
+    {
+        if (SetProperty(ref _selectedCategory, value))
+        {
+            FilterRecipes();
+        }
+    }
+}
     private string _selectedDietTag = "DietTag";
         public string SelectedDietTag
         {
@@ -78,6 +91,7 @@ public partial class RecipesViewModel : BaseViewModel
         _ = LoadDifficultyLevelsAsync();
         _ = LoadCookingTimesAsync();
         _ = LoadDietTagsAsync();
+        _ = LoadCategoriesAsync();
     }
 
     private async Task LoadRecipesAsync()
@@ -97,6 +111,7 @@ public partial class RecipesViewModel : BaseViewModel
         await LoadDifficultyLevelsAsync();
         await LoadCookingTimesAsync();
         await LoadDietTagsAsync();
+        await LoadCategoriesAsync();
 
         // Finally filter after everything is loaded
         FilterRecipes();
@@ -115,18 +130,16 @@ public partial class RecipesViewModel : BaseViewModel
 {
     var filtered = Recipes.Where(r =>
     {
-        // Apply search, difficulty, and cooking time filters (as you already have)
+        // Existing filters: search, difficulty, cooking time, and diet
         bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower());
         bool matchesDifficulty = string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
             (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase));
         bool matchesCookingTime = string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time" ||
             r.CookingTime.ToString() == SelectedCookingTime;
 
-        // DietTag filtering
         bool matchesDiet = true;
         if (!string.IsNullOrWhiteSpace(SelectedDietTag) && SelectedDietTag != "DietTag")
         {
-            // Gather all diettags for the current recipe from its ingredients
             var recipeDietTags = r.RecipeIngredients
                 .Select(ri => ri.Ingredient?.DietTag)
                 .Where(tag => !string.IsNullOrWhiteSpace(tag))
@@ -135,32 +148,38 @@ public partial class RecipesViewModel : BaseViewModel
 
             if (SelectedDietTag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase))
             {
-                // For non-vegetarian, we show all recipes regardless
                 matchesDiet = true;
             }
             else if (SelectedDietTag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase))
             {
-                // Exclude if any ingredient is Non-Vegetarian
                 matchesDiet = !recipeDietTags.Any(tag => tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase));
             }
             else if (SelectedDietTag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase))
             {
-                // Exclude if any ingredient is Non-Vegetarian or Pescatarian
-                matchesDiet = !recipeDietTags.Any(tag => 
-                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) || 
+                matchesDiet = !recipeDietTags.Any(tag =>
+                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) ||
                     tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase));
             }
             else if (SelectedDietTag.Equals("Vegan", StringComparison.OrdinalIgnoreCase))
             {
-                // Exclude if any ingredient is Non-Vegetarian, Pescatarian or Vegetarian
-                matchesDiet = !recipeDietTags.Any(tag => 
-                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) || 
+                matchesDiet = !recipeDietTags.Any(tag =>
+                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) ||
                     tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase) ||
                     tag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase));
             }
         }
 
-        return matchesSearch && matchesDifficulty && matchesCookingTime && matchesDiet;
+        // New filter: Category filtering
+        bool matchesCategory = true;
+        if (!string.IsNullOrWhiteSpace(SelectedCategory) && SelectedCategory != "Category")
+        {
+            // Check if any ingredient in the recipe has the selected category.
+            matchesCategory = r.RecipeIngredients.Any(ri =>
+                ri.Ingredient != null &&
+                ri.Ingredient.Category.Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return matchesSearch && matchesDifficulty && matchesCookingTime && matchesDiet && matchesCategory;
     }).ToList();
 
     FilteredRecipes.Clear();
@@ -206,6 +225,18 @@ public partial class RecipesViewModel : BaseViewModel
         }
         SelectedDietTag = "DietTag";
     }
+
+    private async Task LoadCategoriesAsync()
+{
+    var categories = await _recipeService.GetCategoriesAsync();
+    Categories.Clear();
+    Categories.Add("Category");  // Placeholder option
+    foreach (var category in categories)
+    {
+        Categories.Add(category);
+    }
+    SelectedCategory = "Category";
+}
 
     public string SearchText
     {

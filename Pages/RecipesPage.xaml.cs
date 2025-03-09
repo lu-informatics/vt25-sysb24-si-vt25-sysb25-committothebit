@@ -24,6 +24,11 @@ public partial class RecipesPage : ContentPage
     DietTagPicker.Focus();
 }
 
+    private void OnCategoryIconTapped(object sender, EventArgs e)
+{
+    CategoryPicker.Focus();
+}
+
 
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
