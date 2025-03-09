@@ -84,7 +84,27 @@
                            Margin="0,0,5,0"
                            Grid.Column="1"/>
                 </Grid>
-                            
+                        
+                     <StackLayout Orientation="Horizontal" Spacing="5">
+      <Picker x:Name="CookingTimePicker"
+              ItemsSource="{Binding CookingTimes}"
+              SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
+               ItemDisplayBinding="{Binding .}"
+               WidthRequest="90"
+              FontSize="18"
+              TextColor="Gray"
+              HorizontalOptions="FillAndExpand" />
+      <Image Source="down.png"
+          WidthRequest="20"
+          HeightRequest="20"
+          VerticalOptions="Center"
+          Margin="0,0,5,0">
+          <Image.GestureRecognizers>
+              <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
+          </Image.GestureRecognizers>
+      </Image>
+  </StackLayout>
+
                         <StackLayout Orientation="Horizontal" Spacing="5" >
                 <Picker x:Name="DifficultyPicker"
                         ItemsSource="{Binding Difficulties}"
@@ -105,25 +125,8 @@
                 </Image>
             </StackLayout>
 
-                   <StackLayout Orientation="Horizontal" Spacing="5">
-       <Picker x:Name="CookingTimePicker"
-               ItemsSource="{Binding CookingTimes}"
-               SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
-                ItemDisplayBinding="{Binding .}"
-                WidthRequest="90"
-               FontSize="18"
-               TextColor="Gray"
-               HorizontalOptions="FillAndExpand" />
-       <Image Source="down.png"
-           WidthRequest="20"
-           HeightRequest="20"
-           VerticalOptions="Center"
-           Margin="0,0,5,0">
-           <Image.GestureRecognizers>
-               <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
-           </Image.GestureRecognizers>
-       </Image>
-   </StackLayout>
+
+                 
 
 
                 <!-- Ingredients at home -->

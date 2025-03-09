@@ -66,28 +66,34 @@ public partial class RecipesViewModel : BaseViewModel
     }
 
     private async Task LoadRecipesAsync()
+{
+    if (IsBusy) return;
+    try
     {
-        if (IsBusy) return;
-        try
-        {
-            IsBusy = true;
-            var recipes = await _recipeService.GetRecipesAsync();
-            Recipes.Clear();
-            foreach (var recipe in recipes)
-            {
-                Recipes.Add(recipe);
-            }
-            FilterRecipes();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading recipes: {ex.Message}");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        IsBusy = true;
+
+        // Load the main recipes
+        var recipes = await _recipeService.GetRecipesAsync();
+        Recipes.Clear();
+        foreach (var recipe in recipes)
+            Recipes.Add(recipe);
+
+        // Also load Difficulty & CookingTime pickers here, awaited
+        await LoadDifficultyLevelsAsync();
+        await LoadCookingTimesAsync();
+
+        // Finally filter after everything is loaded
+        FilterRecipes();
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error loading recipes: {ex.Message}");
+    }
+    finally
+    {
+        IsBusy = false;
+    }
+}
 
     private void FilterRecipes()
     {
