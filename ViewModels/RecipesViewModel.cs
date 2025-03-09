@@ -20,6 +20,8 @@ public partial class RecipesViewModel : BaseViewModel
     public ObservableCollection<string> Difficulties { get; } = new ObservableCollection<string>();
     public ObservableCollection<string> CookingTimes { get; } = new ObservableCollection<string>();
 
+    public ObservableCollection<string> DietTags { get; } = new ObservableCollection<string>();
+
     private string _selectedDifficulty = "Difficulty";
     public string SelectedDifficulty
     {
@@ -46,6 +48,18 @@ public partial class RecipesViewModel : BaseViewModel
         }
     }
 
+    private string _selectedDietTag = "DietTag";
+        public string SelectedDietTag
+        {
+            get => _selectedDietTag;
+            set
+            {
+                if (SetProperty(ref _selectedDietTag, value))
+                {
+                    FilterRecipes();
+                }
+            }
+}
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
     public IRelayCommand OpenAddRecipeCommand { get; }
@@ -63,6 +77,7 @@ public partial class RecipesViewModel : BaseViewModel
         
         _ = LoadDifficultyLevelsAsync();
         _ = LoadCookingTimesAsync();
+        _ = LoadDietTagsAsync();
     }
 
     private async Task LoadRecipesAsync()
@@ -81,6 +96,7 @@ public partial class RecipesViewModel : BaseViewModel
         // Also load Difficulty & CookingTime pickers here, awaited
         await LoadDifficultyLevelsAsync();
         await LoadCookingTimesAsync();
+        await LoadDietTagsAsync();
 
         // Finally filter after everything is loaded
         FilterRecipes();
@@ -96,33 +112,64 @@ public partial class RecipesViewModel : BaseViewModel
 }
 
     private void FilterRecipes()
+{
+    var filtered = Recipes.Where(r =>
     {
-        if (string.IsNullOrWhiteSpace(SearchText) &&
-            (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty") &&
-            (string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time"))
+        // Apply search, difficulty, and cooking time filters (as you already have)
+        bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower());
+        bool matchesDifficulty = string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
+            (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase));
+        bool matchesCookingTime = string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time" ||
+            r.CookingTime.ToString() == SelectedCookingTime;
+
+        // DietTag filtering
+        bool matchesDiet = true;
+        if (!string.IsNullOrWhiteSpace(SelectedDietTag) && SelectedDietTag != "DietTag")
         {
-            FilteredRecipes.Clear();
-            foreach (var recipe in Recipes)
+            // Gather all diettags for the current recipe from its ingredients
+            var recipeDietTags = r.RecipeIngredients
+                .Select(ri => ri.Ingredient?.DietTag)
+                .Where(tag => !string.IsNullOrWhiteSpace(tag))
+                .Distinct()
+                .ToList();
+
+            if (SelectedDietTag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase))
             {
-                FilteredRecipes.Add(recipe);
+                // For non-vegetarian, we show all recipes regardless
+                matchesDiet = true;
             }
-            return;
+            else if (SelectedDietTag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase))
+            {
+                // Exclude if any ingredient is Non-Vegetarian
+                matchesDiet = !recipeDietTags.Any(tag => tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase));
+            }
+            else if (SelectedDietTag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase))
+            {
+                // Exclude if any ingredient is Non-Vegetarian or Pescatarian
+                matchesDiet = !recipeDietTags.Any(tag => 
+                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) || 
+                    tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase));
+            }
+            else if (SelectedDietTag.Equals("Vegan", StringComparison.OrdinalIgnoreCase))
+            {
+                // Exclude if any ingredient is Non-Vegetarian, Pescatarian or Vegetarian
+                matchesDiet = !recipeDietTags.Any(tag => 
+                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) || 
+                    tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase) ||
+                    tag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase));
+            }
         }
 
-        var filtered = Recipes.Where(r =>
-             (string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower())) &&
-             (string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
-                 (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase))) &&
-             (string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time" ||
-                 r.CookingTime.ToString() == SelectedCookingTime)
-        ).ToList();
+        return matchesSearch && matchesDifficulty && matchesCookingTime && matchesDiet;
+    }).ToList();
 
-        FilteredRecipes.Clear();
-        foreach (var recipe in filtered)
-        {
-            FilteredRecipes.Add(recipe);
-        }
+    FilteredRecipes.Clear();
+    foreach (var recipe in filtered)
+    {
+        FilteredRecipes.Add(recipe);
     }
+}
+
 
     private async Task LoadDifficultyLevelsAsync()
     {
@@ -147,6 +194,19 @@ public partial class RecipesViewModel : BaseViewModel
         }
         SelectedCookingTime = "Cooking time";
     }
+
+    private async Task LoadDietTagsAsync()
+{
+        var tags = await _recipeService.GetDietTagsAsync();
+        DietTags.Clear();
+        DietTags.Add("DietTag"); // Placeholder option
+        foreach (var tag in tags)
+        {
+            DietTags.Add(tag);
+        }
+        SelectedDietTag = "DietTag";
+    }
+
     public string SearchText
     {
         get => _searchText;

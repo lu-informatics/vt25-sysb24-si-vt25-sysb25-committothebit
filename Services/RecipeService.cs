@@ -87,6 +87,16 @@ public class RecipeService : IRecipeService
                          .OrderBy(time => time)
                          .ToListAsync();
 }
+    public async Task<List<string>> GetDietTagsAsync()
+        {
+            // This assumes you have access to RecipeIngredients and each RecipeIngredient includes its Ingredient.
+            var dietTags = await _context.RecipeIngredients
+                .Include(ri => ri.Ingredient)
+                .Select(ri => ri.Ingredient.DietTag)
+                .Distinct()
+                .ToListAsync();
+            return dietTags;
+        }
 
 
 

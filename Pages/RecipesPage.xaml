@@ -65,26 +65,26 @@
                 </Grid>
 
                 <!-- DietTag -->
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Picker Title="DietTag"
-                            ItemsSource="{Binding DietTags}"
-                            SelectedItem="{Binding SelectedDietTag}"
-                            WidthRequest="90"
-                            FontSize="18"
-                            TextColor="gray"
-                            Grid.Column="0"/>
-                    <Image Source="down.png"
-                           WidthRequest="20"
-                           HeightRequest="20"
-                           VerticalOptions="Center"
-                           Margin="0,0,5,0"
-                           Grid.Column="1"/>
-                </Grid>
-                        
+                <StackLayout Orientation="Horizontal" Spacing="5">
+    <Picker x:Name="DietTagPicker"
+            ItemsSource="{Binding DietTags}"
+            SelectedItem="{Binding SelectedDietTag}"
+            ItemDisplayBinding="{Binding .}"
+            WidthRequest="90"
+            FontSize="18"
+            TextColor="Gray"
+            HorizontalOptions="FillAndExpand" />
+    <Image Source="down.png"
+           WidthRequest="20"
+           HeightRequest="20"
+           VerticalOptions="Center"
+           Margin="0,0,5,0">
+        <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnDietTagIconTapped"/>
+        </Image.GestureRecognizers>
+    </Image>
+</StackLayout>
+
                      <StackLayout Orientation="Horizontal" Spacing="5">
       <Picker x:Name="CookingTimePicker"
               ItemsSource="{Binding CookingTimes}"
