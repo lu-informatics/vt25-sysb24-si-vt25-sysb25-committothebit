@@ -52,13 +52,6 @@
                     TextColor="White"
                     FontAttributes="Bold"
                     Padding="12"/>
-            <!-- Delete Button -->
-            <Button Text="Delete"
-                    Command="{Binding DeleteIngredientCommand}"
-                    BackgroundColor="#E74C3C"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    Padding="12"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

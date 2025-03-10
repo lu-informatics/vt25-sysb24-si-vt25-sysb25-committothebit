@@ -25,7 +25,7 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" BackgroundColor="White">
+                    <Grid Padding="10" ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto" BackgroundColor="White">
                         <!-- Ingredient Name -->
                         <Label Grid.Row="0" Grid.Column="0"
                                 Text="{Binding Ingredient.Name}"
@@ -35,19 +35,18 @@
                                 TextColor="Black"
                                 VerticalOptions="Center" />
                         <!-- Ingredient Category -->
-                        <Label Grid.Row="1" Grid.Column="0"
-                                Text="{Binding Ingredient.Category, StringFormat='Category: {0}'}"
+                        <Label Grid.Row="0" Grid.Column="1"
+                                Text="{Binding Ingredient.Category}"
                                 FontSize="16"
                                 AutomationId="IngredientCategory"
                                 TextColor="Gray"
                                 VerticalOptions="Center" />
-                     <!-- Ingredient Amount and Unit -->
-                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                        <!-- Ingredient Amount and Unit -->
+                        <Label Grid.Row="0" Grid.Column="2"
                                 FontSize="16"
                                 AutomationId="IngredientAmount"
                                 TextColor="Black"
-                                VerticalOptions="Center"
-                                HorizontalOptions="End">
+                                VerticalOptions="Center">
                             <Label.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="Amount" />
@@ -55,6 +54,32 @@
                                 </MultiBinding>
                             </Label.Text>
                         </Label>
+                        <!-- Edit Button -->
+                        <Button Grid.Row="0" Grid.Column="3"
+                                Text="Edit"
+                                Command="{Binding Path=BindingContext.DeleteUserIngredientCommand, Source={x:Reference IngredientsList}}"
+                                CommandParameter="{Binding .}"
+                                BackgroundColor="#FF2EB843"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                Padding="1"
+                                Margin="0,0,5,0"
+                                WidthRequest="100"
+                                VerticalOptions="Center"/>
+                        <!-- Delete Button -->
+                        <Button Grid.Row="0" Grid.Column="4"
+                                Text="Delete"
+                                Command="{Binding Path=BindingContext.DeleteUserIngredientCommand, Source={x:Reference IngredientsList}}"
+                                CommandParameter="{Binding .}"
+                                BackgroundColor="#E74C3C"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                Padding="1"
+                                Margin="0,0,5,0"
+                                WidthRequest="100"
+                                VerticalOptions="Center"/>
                         <!-- Tap Gesture for Selecting Ingredient -->
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenIngredientDetailsCommand,
