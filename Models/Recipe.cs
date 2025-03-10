@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text.Json;
 
 namespace Informatics.Appetite.Models
 {
@@ -34,6 +33,7 @@ namespace Informatics.Appetite.Models
         [Column("difficultyLevel")]
         [MaxLength(50)]
         public string? DifficultyLevel { get; set; }
+        
 
         [NotMapped]
         public RecipeData? ParsedData
@@ -49,40 +49,64 @@ namespace Informatics.Appetite.Models
             }
         }
 
+        // Existing logic: automatically determine the DietTag based on the recipe's ingredients
         [NotMapped]
         public string DietTag
         {
             get
             {
-                // Check if any ingredient is Non-Vegetarian first.
+                // Check if any ingredient is Non-Vegetarian first
                 if (RecipeIngredients.Any(ri => ri.Ingredient != null &&
                     ri.Ingredient.DietTag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase)))
                 {
                     return "Non-Vegetarian";
                 }
-                // Next, check for Pescatarian.
+                // Next, check for Pescatarian
                 else if (RecipeIngredients.Any(ri => ri.Ingredient != null &&
                     ri.Ingredient.DietTag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase)))
                 {
                     return "Pescatarian";
                 }
-                // Then, check for Vegetarian.
+                // Then, check for Vegetarian
                 else if (RecipeIngredients.Any(ri => ri.Ingredient != null &&
                     ri.Ingredient.DietTag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase)))
                 {
                     return "Vegetarian";
                 }
-                // Finally, if all ingredients are Vegan.
+                // Finally, if all ingredients are Vegan
                 else if (RecipeIngredients.All(ri => ri.Ingredient != null &&
                     ri.Ingredient.DietTag.Equals("Vegan", StringComparison.OrdinalIgnoreCase)))
                 {
                     return "Vegan";
                 }
-                // Fallback if no valid tags are found.
+                // Fallback if no valid tags are found
                 return "Unknown";
             }
         }
 
+        // New property that maps DietTag to the correct CSS style class
+        [NotMapped]
+        public string DietTagStyleClass
+        {
+            get
+            {
+                switch (DietTag?.ToLower())
+                {
+                    case "vegan":
+                        return "vegan";
+                    case "vegetarian":
+                        return "vegetarian";
+                    case "pescatarian":
+                        return "pescatarian";
+                    case "non-vegetarian":
+                        return "non-vegetarian";
+                    default:
+                        return "unknown";
+                }
+            }
+        }
+
+        // Navigation property
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
     }
 }
