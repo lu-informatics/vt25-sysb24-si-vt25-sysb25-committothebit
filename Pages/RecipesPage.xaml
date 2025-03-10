@@ -2,29 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Informatics.Appetite.Pages.RecipesPage"
              Title="Recipes"
-             BackgroundColor="White"> <!-- Ändra bakgrundsfärgen här -->
+             BackgroundColor="White">
     
     <ScrollView Orientation="Both">
         <VerticalStackLayout Padding="15" Spacing="10">
             
             <!-- Filter Section -->
-            <HorizontalStackLayout Spacing="5"
-                                   HorizontalOptions="FillAndExpand">
-
+            <HorizontalStackLayout Spacing="5" HorizontalOptions="FillAndExpand">
                 <Frame BorderColor="gray" 
                        CornerRadius="6" 
                        Padding="3" 
                        HasShadow="False"
                        HorizontalOptions="FillAndExpand"
-                       WidthRequest="500"> <!-- Justera bredden här -->
+                       WidthRequest="500">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <!-- * gör att sökfältet tar upp så mycket plats som möjligt -->
                             <ColumnDefinition Width="*" />
-                            <!-- Auto gör att ikonen endast tar den plats den behöver -->
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-
                         <SearchBar Placeholder="Search recipes..."
                                    Text="{Binding SearchText}"
                                    HorizontalOptions="FillAndExpand"
@@ -32,8 +27,6 @@
                                    PlaceholderColor="Gray"
                                    TextColor="Black" 
                                    FontSize="18"/>
-
-                        <!-- Minska margin här så att den inte trycker ut sökfältet -->
                         <Image Source="down.png"
                                WidthRequest="20"
                                HeightRequest="20"
@@ -44,93 +37,91 @@
                     </Grid>
                 </Frame>
 
-                <StackLayout Orientation="Horizontal" Spacing="5" Margin="150,0,0,0" >
-    <Picker x:Name="CategoryPicker"
-            ItemsSource="{Binding Categories}"
-            SelectedItem="{Binding SelectedCategory}"
-            ItemDisplayBinding="{Binding .}"
-            WidthRequest="90"
-            FontSize="18"
-            TextColor="Gray"
-            HorizontalOptions="FillAndExpand" />
-    <Image Source="down.png"
-           WidthRequest="20"
-           HeightRequest="20"
-           VerticalOptions="Center"
-           Margin="0,0,5,0">
-        <Image.GestureRecognizers>
-            <TapGestureRecognizer Tapped="OnCategoryIconTapped"/>
-        </Image.GestureRecognizers>
-    </Image>
-</StackLayout>
+                <!-- Category Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="150,0,0,0">
+                    <Picker x:Name="CategoryPicker"
+                            ItemsSource="{Binding Categories}"
+                            SelectedItem="{Binding SelectedCategory}"
+                            ItemDisplayBinding="{Binding .}"
+                            WidthRequest="90"
+                            FontSize="18"
+                            TextColor="Gray"
+                            HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                           WidthRequest="20"
+                           HeightRequest="20"
+                           VerticalOptions="Center"
+                           Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCategoryIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
 
-
-                <!-- DietTag -->
+                <!-- DietTag Filter -->
                 <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
-    <Picker x:Name="DietTagPicker"
-            ItemsSource="{Binding DietTags}"
-            SelectedItem="{Binding SelectedDietTag}"
-            ItemDisplayBinding="{Binding .}"
-            WidthRequest="90"
-            FontSize="18"
-            TextColor="Gray"
-            HorizontalOptions="FillAndExpand" />
-    <Image Source="down.png"
-           WidthRequest="20"
-           HeightRequest="20"
-           VerticalOptions="Center"
-           Margin="0,0,5,0">
-        <Image.GestureRecognizers>
-            <TapGestureRecognizer Tapped="OnDietTagIconTapped"/>
-        </Image.GestureRecognizers>
-    </Image>
-</StackLayout>
+                    <Picker x:Name="DietTagPicker"
+                            ItemsSource="{Binding DietTags}"
+                            SelectedItem="{Binding SelectedDietTag}"
+                            ItemDisplayBinding="{Binding .}"
+                            WidthRequest="90"
+                            FontSize="18"
+                            TextColor="Gray"
+                            HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                           WidthRequest="20"
+                           HeightRequest="20"
+                           VerticalOptions="Center"
+                           Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnDietTagIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
 
-                     <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
-      <Picker x:Name="CookingTimePicker"
-              ItemsSource="{Binding CookingTimes}"
-              SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
-               ItemDisplayBinding="{Binding .}"
-               WidthRequest="90"
-              FontSize="18"
-              TextColor="Gray"
-              HorizontalOptions="FillAndExpand" />
-      <Image Source="down.png"
-          WidthRequest="20"
-          HeightRequest="20"
-          VerticalOptions="Center"
-          Margin="0,0,5,0">
-          <Image.GestureRecognizers>
-              <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
-          </Image.GestureRecognizers>
-      </Image>
-  </StackLayout>
+                <!-- CookingTime Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
+                    <Picker x:Name="CookingTimePicker"
+                            ItemsSource="{Binding CookingTimes}"
+                            SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
+                            ItemDisplayBinding="{Binding .}"
+                            WidthRequest="90"
+                            FontSize="18"
+                            TextColor="Gray"
+                            HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                           WidthRequest="20"
+                           HeightRequest="20"
+                           VerticalOptions="Center"
+                           Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
 
-                        <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0" >
-                <Picker x:Name="DifficultyPicker"
-                        ItemsSource="{Binding Difficulties}"
-                        SelectedItem="{Binding SelectedDifficulty}"
-                        ItemDisplayBinding="{Binding .}"
-                        WidthRequest="90"
-                        FontSize="18"
-                        TextColor="Gray"
-                        HorizontalOptions="FillAndExpand" />
-                <Image Source="down.png"
-                    WidthRequest="20"
-                    HeightRequest="20"
-                    VerticalOptions="Center"
-                    Margin="0,0,5,0">
-                    <Image.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnDifficultyIconTapped"/>
-                    </Image.GestureRecognizers>
-                </Image>
-            </StackLayout>
+                <!-- Difficulty Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
+                    <Picker x:Name="DifficultyPicker"
+                            ItemsSource="{Binding Difficulties}"
+                            SelectedItem="{Binding SelectedDifficulty}"
+                            ItemDisplayBinding="{Binding .}"
+                            WidthRequest="90"
+                            FontSize="18"
+                            TextColor="Gray"
+                            HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                           WidthRequest="20"
+                           HeightRequest="20"
+                           VerticalOptions="Center"
+                           Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnDifficultyIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
 
-
-                 
-
-
-                <!-- Ingredients at home -->
+                <!-- Ingredients Filter -->
                 <Grid Margin="30,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -154,64 +145,79 @@
 
             <!-- Table Header -->
             <Grid ColumnDefinitions="*, *, *, *, *" Padding="10" Margin="0,2" BackgroundColor="white" HeightRequest="50">
-                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize ="18" Margin="38,8,0,0"/>
-                <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize ="18" Margin="78,8,0,0"/>
-                <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize ="18" Margin="78,8,0,0"/>
-                <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize ="18" Margin="178,8,0,0"/>
+                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize="18" Margin="38,8,0,0"/>
+                <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize="18" Margin="78,8,0,0"/>
+                <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize="18" Margin="134,8,0,0"/>
+                <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize="18" Margin="228,8,0,0"/>
             </Grid>
 
             <!-- Recipes List in Table Format -->
-           <!-- Recipes List in Table Format -->
-            <!-- Recipes List in Table Format -->
-        <!-- Recipes List in Table Format -->
-<CollectionView x:Name="RecipesList"
-                ItemsSource="{Binding FilteredRecipes}"
-                SelectionMode="None"
-                VerticalOptions="FillAndExpand"
-                ItemsUpdatingScrollMode="KeepItemsInView">
-    <CollectionView.ItemTemplate>
-        <DataTemplate>
-            <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
-                <Grid ColumnDefinitions="100, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+            <CollectionView x:Name="RecipesList"
+                            ItemsSource="{Binding FilteredRecipes}"
+                            SelectionMode="None"
+                            VerticalOptions="FillAndExpand"
+                            ItemsUpdatingScrollMode="KeepItemsInView">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
+                            <!-- Updated grid: Removed Category column -->
+                            <Grid ColumnDefinitions="100, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+                                <!-- Tap on the entire row opens details -->
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer 
+                                        Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
+                                        CommandParameter="{Binding Id}" />
+                                </Grid.GestureRecognizers>
+                                
+                                <!-- Difficulty -->
+                                <Label Text="{Binding DifficultyLevel}" 
+                                       TextColor="{Binding DifficultyColor}" 
+                                       FontSize="18" 
+                                       Grid.Column="0" 
+                                       Margin="20,5,0,0" />
+                                <!-- Recipe Name -->
+                                <Label Text="{Binding Name}" 
+                                       TextColor="Black" 
+                                       FontSize="18" 
+                                       Grid.Column="1" 
+                                       Margin="250,7,0,0"/>
+                                
+                                <!-- Cooking Time -->
+                                <StackLayout Orientation="Horizontal" Grid.Column="1" Margin="750,7,0,0">
+                                <Label Text="{Binding CookingTime, StringFormat='{0} min'}" 
+                                    TextColor="Black" 
+                                    FontSize="18"/>
+                                <Image Source="clock_three.png"
+                                    WidthRequest="20"
+                                    HeightRequest="20"
+                                    VerticalOptions="Center"
+                                    Margin="15,0,0,11"/>
+                            </StackLayout>
 
-                    <!-- Tap on the entire row opens details -->
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer 
-                            Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
-                            CommandParameter="{Binding Id}" />
-                    </Grid.GestureRecognizers>
-
-                    <!-- Difficulty -->
-                                    <!-- Difficulty -->
-                    <Label Text="{Binding DifficultyLevel}" TextColor="{Binding DifficultyColor}" FontSize="18" Grid.Column="0" Margin="20,5,0,0" />
-                    <!-- Recipe Name -->
-                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="250,7,0,0"/>
-
-                    <!-- Category -->
-                    <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
-                    <!-- Diet Tag (Updated binding) -->
-                    <Label Text="{Binding DietTag}" TextColor="Black" FontSize="18" Grid.Column="3"/>
-                    <!-- More Options -->
-                    <Image Source="three_dots.png"
-                           Grid.Column="4"
-                           WidthRequest="40"
-                           HeightRequest="40"
-                           HorizontalOptions="End"
-                           VerticalOptions="Center">
-                        <Image.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                Command="{Binding Path=BindingContext.OpenRecipeOptionsCommand, Source={x:Reference RecipesList}}"
-                                CommandParameter="{Binding Id}" />
-                        </Image.GestureRecognizers>
-                    </Image>
-                </Grid>
-            </Frame>
-        </DataTemplate>
-    </CollectionView.ItemTemplate>
-</CollectionView>
-
-
-
+                                <!-- Diet Tag -->
+                                <Label Text="{Binding DietTag}" 
+                                       TextColor="Black" 
+                                       FontSize="18" 
+                                       Grid.Column="1"
+                                       Margin= "1150,7,0,0"/>
+                                <!-- More Options -->
+                                <Image Source="three_dots.png"
+                                       Grid.Column="4"
+                                       WidthRequest="40"
+                                       HeightRequest="40"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="Center">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Path=BindingContext.OpenRecipeOptionsCommand, Source={x:Reference RecipesList}}"
+                                            CommandParameter="{Binding Id}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
