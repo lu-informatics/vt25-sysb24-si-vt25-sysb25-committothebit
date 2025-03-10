@@ -154,10 +154,10 @@
 
             <!-- Table Header -->
             <Grid ColumnDefinitions="*, *, *, *, *" Padding="10" Margin="0,2" BackgroundColor="white" HeightRequest="50">
-                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Center"/>
-                <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Center"/>
-                <Label Text="Category" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Center"/>
-                <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Center"/>
+                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize ="18" Margin="38,8,0,0"/>
+                <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize ="18" Margin="78,8,0,0"/>
+                <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize ="18" Margin="78,8,0,0"/>
+                <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize ="18" Margin="178,8,0,0"/>
             </Grid>
 
             <!-- Recipes List in Table Format -->
@@ -181,13 +181,13 @@
                     </Grid.GestureRecognizers>
 
                     <!-- Difficulty -->
-                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,0,0,0"/>
+                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,5,0,0"/>
                     <!-- Recipe Name -->
-                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="220,0,0,0"/>
+                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="220,5,0,0"/>
                     <!-- Category -->
                     <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
                     <!-- Diet Tag (Updated binding) -->
-                    <Label Text="{Binding DietTag}" TextColor="Black" Grid.Column="3"/>
+                    <Label Text="{Binding DietTag}" TextColor="Black" FontSize="18" Grid.Column="3"/>
                     <!-- More Options -->
                     <Image Source="three_dots.png"
                            Grid.Column="4"

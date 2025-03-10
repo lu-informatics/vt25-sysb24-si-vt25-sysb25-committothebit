@@ -84,27 +84,6 @@ namespace Informatics.Appetite.Models
             }
         }
 
-        // New property that maps DietTag to the correct CSS style class
-        [NotMapped]
-        public string DietTagStyleClass
-        {
-            get
-            {
-                switch (DietTag?.ToLower())
-                {
-                    case "vegan":
-                        return "vegan";
-                    case "vegetarian":
-                        return "vegetarian";
-                    case "pescatarian":
-                        return "pescatarian";
-                    case "non-vegetarian":
-                        return "non-vegetarian";
-                    default:
-                        return "unknown";
-                }
-            }
-        }
 
         // Navigation property
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
