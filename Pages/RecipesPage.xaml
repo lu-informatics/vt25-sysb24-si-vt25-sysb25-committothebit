@@ -172,7 +172,8 @@
     <CollectionView.ItemTemplate>
         <DataTemplate>
             <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
-                <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+                <Grid ColumnDefinitions="100, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+
                     <!-- Tap on the entire row opens details -->
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer 
@@ -181,9 +182,11 @@
                     </Grid.GestureRecognizers>
 
                     <!-- Difficulty -->
-                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,5,0,0"/>
+                                    <!-- Difficulty -->
+                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="20,5,0,0" />
                     <!-- Recipe Name -->
-                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="220,5,0,0"/>
+                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="250,7,0,0"/>
+
                     <!-- Category -->
                     <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
                     <!-- Diet Tag (Updated binding) -->
