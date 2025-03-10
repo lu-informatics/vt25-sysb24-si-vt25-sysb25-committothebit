@@ -163,6 +163,7 @@
             <!-- Recipes List in Table Format -->
            <!-- Recipes List in Table Format -->
             <!-- Recipes List in Table Format -->
+        <!-- Recipes List in Table Format -->
 <CollectionView x:Name="RecipesList"
                 ItemsSource="{Binding FilteredRecipes}"
                 SelectionMode="None"
@@ -205,6 +206,7 @@
         </DataTemplate>
     </CollectionView.ItemTemplate>
 </CollectionView>
+
 
 
         </VerticalStackLayout>
