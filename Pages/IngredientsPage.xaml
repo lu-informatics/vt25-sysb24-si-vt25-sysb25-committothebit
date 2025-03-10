@@ -4,7 +4,8 @@
              x:Class="Informatics.Appetite.Pages.IngredientsPage"
              Title="My Ingredients">
 
-    <VerticalStackLayout Padding="15" Spacing="10">
+    <!-- Use Grid to Structure Layout -->
+    <Grid RowDefinitions="Auto, *" Padding="15" RowSpacing="10">
 
         <!-- Add Ingredient Button -->
         <Button Text="Add Ingredient"
@@ -14,39 +15,41 @@
                 TextColor="White"
                 FontAttributes="Bold"
                 CornerRadius="10"
-                Padding="10"/>
+                Padding="10"
+                Grid.Row="0"/>
 
-        <!-- CollectionView for Ingredient List -->
+        <!-- CollectionView (Expands to Fill Remaining Space) -->
         <CollectionView x:Name="IngredientsList"
                         ItemsSource="{Binding UserIngredients}"
                         SelectionMode="Single"
+                        ItemsUpdatingScrollMode="KeepItemsInView"
                         VerticalOptions="FillAndExpand"
-                        ItemsUpdatingScrollMode="KeepItemsInView">
+                        Grid.Row="1">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="10" ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto" BackgroundColor="White">
                         <!-- Ingredient Name -->
                         <Label Grid.Row="0" Grid.Column="0"
-                                Text="{Binding Ingredient.Name}"
-                                FontAttributes="Bold"
-                                FontSize="18"
-                                AutomationId="IngredientName"
-                                TextColor="Black"
-                                VerticalOptions="Center" />
+                               Text="{Binding Ingredient.Name}"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               AutomationId="IngredientName"
+                               TextColor="Black"
+                               VerticalOptions="Center" />
                         <!-- Ingredient Category -->
                         <Label Grid.Row="0" Grid.Column="1"
-                                Text="{Binding Ingredient.Category}"
-                                FontSize="16"
-                                AutomationId="IngredientCategory"
-                                TextColor="Gray"
-                                VerticalOptions="Center" />
+                               Text="{Binding Ingredient.Category}"
+                               FontSize="16"
+                               AutomationId="IngredientCategory"
+                               TextColor="Gray"
+                               VerticalOptions="Center" />
                         <!-- Ingredient Amount and Unit -->
                         <Label Grid.Row="0" Grid.Column="2"
-                                FontSize="16"
-                                AutomationId="IngredientAmount"
-                                TextColor="Black"
-                                VerticalOptions="Center">
+                               FontSize="16"
+                               AutomationId="IngredientAmount"
+                               TextColor="Black"
+                               VerticalOptions="Center">
                             <Label.Text>
                                 <MultiBinding StringFormat="{}{0} {1}">
                                     <Binding Path="Amount" />
@@ -84,20 +87,23 @@
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenIngredientDetailsCommand,
                                                             Source={x:Reference IngredientsList}}"
-                                                    CommandParameter="{Binding Id}"/>
+                                                  CommandParameter="{Binding Id}"/>
                         </Grid.GestureRecognizers>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
             <!-- Empty View -->
             <CollectionView.EmptyView>
                 <Label Text="No ingredients found."
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        FontSize="16"
-                        FontAttributes="Italic"
-                        TextColor="Gray"/>
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="16"
+                       FontAttributes="Italic"
+                       TextColor="Gray"/>
             </CollectionView.EmptyView>
         </CollectionView>
-    </VerticalStackLayout>
+
+    </Grid>
+
 </ContentPage>
