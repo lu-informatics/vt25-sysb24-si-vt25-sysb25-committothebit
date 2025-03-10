@@ -183,7 +183,7 @@
 
                     <!-- Difficulty -->
                                     <!-- Difficulty -->
-                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="20,5,0,0" />
+                    <Label Text="{Binding DifficultyLevel}" TextColor="{Binding DifficultyColor}" FontSize="18" Grid.Column="0" Margin="20,5,0,0" />
                     <!-- Recipe Name -->
                     <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="250,7,0,0"/>
 

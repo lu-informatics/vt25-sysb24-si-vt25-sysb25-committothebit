@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Microsoft.Maui.Graphics;
 
 namespace Informatics.Appetite.Models
 {
@@ -48,7 +49,20 @@ namespace Informatics.Appetite.Models
                 return parsed;
             }
         }
-
+        [NotMapped]
+            public Color DifficultyColor
+            {
+                get
+                {
+                    return DifficultyLevel switch
+                    {
+                        "Easy" => Colors.Green,
+                        "Medium" => Color.FromArgb("#DDAA00"),
+                        "Hard" => Colors.Red,
+                        _ => Colors.Gray // Default color if difficulty is unknown
+                    };
+                }
+}
         // Existing logic: automatically determine the DietTag based on the recipe's ingredients
         [NotMapped]
         public string DietTag
