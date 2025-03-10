@@ -145,7 +145,7 @@
 
             <!-- Table Header -->
             <Grid ColumnDefinitions="*, *, *, *, *" Padding="10" Margin="0,2" BackgroundColor="white" HeightRequest="50">
-                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize="18" Margin="38,8,0,0"/>
+                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize="18" Margin="54,8,0,0"/>
                 <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize="18" Margin="78,8,0,0"/>
                 <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize="18" Margin="134,8,0,0"/>
                 <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize="18" Margin="228,8,0,0"/>
@@ -173,8 +173,8 @@
                                 <Label Text="{Binding DifficultyLevel}" 
                                        TextColor="{Binding DifficultyColor}" 
                                        FontSize="18" 
-                                       Grid.Column="0" 
-                                       Margin="20,5,0,0" />
+                                       Grid.Column="1" 
+                                       Margin="-30,5,0,0" />
                                 <!-- Recipe Name -->
                                 <Label Text="{Binding Name}" 
                                        TextColor="Black" 
