@@ -85,7 +85,7 @@
                             ItemsSource="{Binding CookingTimes}"
                             SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
                             ItemDisplayBinding="{Binding .}"
-                            WidthRequest="90"
+                            WidthRequest="130"
                             FontSize="18"
                             TextColor="Gray"
                             HorizontalOptions="FillAndExpand" />
@@ -130,7 +130,7 @@
                     <Picker Title="Recipes with your ingredients"
                             ItemsSource="{Binding Ingredients}"
                             SelectedItem="{Binding SelectedIngredients}"
-                            WidthRequest="190"
+                            WidthRequest="250"
                             FontSize="18"
                             TextColor="gray"
                             Grid.Column="0"/>
@@ -146,7 +146,7 @@
             <!-- Table Header -->
             <Grid ColumnDefinitions="*, *, *, *, *" Padding="10" Margin="0,2" BackgroundColor="white" HeightRequest="50">
                 <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize="18" Margin="54,8,0,0"/>
-                <Label Text="Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize="18" Margin="78,8,0,0"/>
+                <Label Text="Recipe Name" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize="18" Margin="57,8,0,0"/>
                 <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize="18" Margin="134,8,0,0"/>
                 <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize="18" Margin="228,8,0,0"/>
             </Grid>
