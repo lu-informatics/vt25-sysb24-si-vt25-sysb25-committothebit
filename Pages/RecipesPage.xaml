@@ -161,46 +161,52 @@
             </Grid>
 
             <!-- Recipes List in Table Format -->
-            <CollectionView x:Name="RecipesList"
-                            ItemsSource="{Binding FilteredRecipes}"
-                            SelectionMode="None"
-                            VerticalOptions="FillAndExpand"
-                            ItemsUpdatingScrollMode="KeepItemsInView">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
-                            <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
-                                        CommandParameter="{Binding Id}" />
-                                </Grid.GestureRecognizers>
-                                <!-- Difficulty -->
-                                <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,0,0,0"/>
-                                <!-- Recipe Name -->
-                                <Label Text="{Binding Name}" TextColor="Black" FontSize="18"  Grid.Column="1" Margin="220,0,0,0"/>
-                                <!-- Category -->
-                                <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
-                                <!-- Diet -->
-                                <Label Text="{Binding Diet}" TextColor="Black" Grid.Column="3"/>
-                                <!-- More Options (three dots button) -->
-                                <Image Source="three_dots.png"
-                                       Grid.Column="4"
-                                       WidthRequest="40"
-                                       HeightRequest="40"
-                                       HorizontalOptions="End"
-                                       VerticalOptions="Center">
-                                    <Image.GestureRecognizers>
-                                        <TapGestureRecognizer 
-                                            Command="{Binding Path=BindingContext.OpenRecipeOptionsCommand, Source={x:Reference RecipesList}}"
-                                            CommandParameter="{Binding Id}" />
-                                    </Image.GestureRecognizers>
-                                </Image>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+           <!-- Recipes List in Table Format -->
+            <!-- Recipes List in Table Format -->
+<CollectionView x:Name="RecipesList"
+                ItemsSource="{Binding FilteredRecipes}"
+                SelectionMode="None"
+                VerticalOptions="FillAndExpand"
+                ItemsUpdatingScrollMode="KeepItemsInView">
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <Frame BorderColor="Gray" Padding="0" Margin="2" HasShadow="False">
+                <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto" Padding="5" BackgroundColor="White">
+                    <!-- Tap on the entire row opens details -->
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer 
+                            Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
+                            CommandParameter="{Binding Id}" />
+                    </Grid.GestureRecognizers>
+
+                    <!-- Difficulty -->
+                    <Label Text="{Binding DifficultyLevel}" TextColor="Black" FontSize="18" Grid.Column="0" Margin="50,0,0,0"/>
+                    <!-- Recipe Name -->
+                    <Label Text="{Binding Name}" TextColor="Black" FontSize="18" Grid.Column="1" Margin="220,0,0,0"/>
+                    <!-- Category -->
+                    <Label Text="{Binding Category}" TextColor="Black" Grid.Column="2"/>
+                    <!-- Diet Tag (Updated binding) -->
+                    <Label Text="{Binding DietTag}" TextColor="Black" Grid.Column="3"/>
+                    <!-- More Options -->
+                    <Image Source="three_dots.png"
+                           Grid.Column="4"
+                           WidthRequest="40"
+                           HeightRequest="40"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Path=BindingContext.OpenRecipeOptionsCommand, Source={x:Reference RecipesList}}"
+                                CommandParameter="{Binding Id}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Grid>
+            </Frame>
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
+
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
