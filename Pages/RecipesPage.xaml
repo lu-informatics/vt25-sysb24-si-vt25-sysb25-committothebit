@@ -44,7 +44,7 @@
                     </Grid>
                 </Frame>
 
-                <StackLayout Orientation="Horizontal" Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="150,0,0,0" >
     <Picker x:Name="CategoryPicker"
             ItemsSource="{Binding Categories}"
             SelectedItem="{Binding SelectedCategory}"
@@ -66,7 +66,7 @@
 
 
                 <!-- DietTag -->
-                <StackLayout Orientation="Horizontal" Spacing="5">
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
     <Picker x:Name="DietTagPicker"
             ItemsSource="{Binding DietTags}"
             SelectedItem="{Binding SelectedDietTag}"
@@ -86,7 +86,7 @@
     </Image>
 </StackLayout>
 
-                     <StackLayout Orientation="Horizontal" Spacing="5">
+                     <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0">
       <Picker x:Name="CookingTimePicker"
               ItemsSource="{Binding CookingTimes}"
               SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
@@ -106,7 +106,7 @@
       </Image>
   </StackLayout>
 
-                        <StackLayout Orientation="Horizontal" Spacing="5" >
+                        <StackLayout Orientation="Horizontal" Spacing="5" Margin="30,0,0,0" >
                 <Picker x:Name="DifficultyPicker"
                         ItemsSource="{Binding Difficulties}"
                         SelectedItem="{Binding SelectedDifficulty}"
@@ -131,7 +131,7 @@
 
 
                 <!-- Ingredients at home -->
-                <Grid Margin="20,0,0,0">
+                <Grid Margin="30,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
