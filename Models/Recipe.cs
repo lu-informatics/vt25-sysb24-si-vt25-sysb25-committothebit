@@ -47,13 +47,5 @@ public class Recipe
         }
     }
 
-    [NotMapped]
-    public string Description => $"Cook Time: {CookingTime} mins • Serves: {Servings} • Difficulty: {DifficultyLevel}";
-
-    [NotMapped]
-    public string StepsDescription => ParsedData != null && ParsedData.steps.Any() ? 
-        string.Join("\n", ParsedData.steps.Select((step, index) => $"{index + 1}. {step}")) : 
-        "No steps available";
-
     public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
 }

@@ -5,6 +5,7 @@ namespace Informatics.Appetite.Models;
 
 public class RecipeData
 {
+    public string description { get; set; } = string.Empty;
     public List<string> steps { get; set; } = new();
 
     private static JsonSerializerOptions DefaultOptions => new()

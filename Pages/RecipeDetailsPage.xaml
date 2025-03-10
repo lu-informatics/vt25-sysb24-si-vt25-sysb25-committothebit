@@ -17,7 +17,7 @@
             <!-- Vertical Layout for Description and Details -->
             <VerticalStackLayout Spacing="40">
                 <!-- Recipe Description -->
-                <Label Text="{Binding Recipe.Description}"
+                <Label Text="{Binding Recipe.ParsedData.description}"
                        FontAttributes="Bold"
                        FontSize="18"
                        TextColor="Black"
@@ -110,19 +110,16 @@
                            TextColor="Black"/>
                     <CollectionView ItemsSource="{Binding Recipe.ParsedData.steps}"
                                   SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+                        </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Padding="5" ColumnDefinitions="Auto,*">
-                                    <Label Grid.Column="0" 
-                                           Text="{Binding Source={RelativeSource Self}, Path='BindingContext', StringFormat='{0}. '}"
-                                           FontSize="16"
-                                           TextColor="Black"
-                                           Margin="0,0,5,0"/>
-                                    <Label Grid.Column="1"
-                                           Text="{Binding .}"
+                                <StackLayout>
+                                    <Label Text="{Binding ., StringFormat='{0}. {1}'}"
                                            FontSize="16"
                                            TextColor="Black"/>
-                                </Grid>
+                                </StackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                         <CollectionView.EmptyView>
