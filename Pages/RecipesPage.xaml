@@ -38,7 +38,7 @@
                 </Frame>
 
                 <!-- Category Filter -->
-                <StackLayout Orientation="Horizontal" Spacing="5" Margin="150,0,0,0">
+                <StackLayout Orientation="Horizontal" Spacing="5" Margin="120,0,0,0">
                     <Picker x:Name="CategoryPicker"
                             ItemsSource="{Binding Categories}"
                             SelectedItem="{Binding SelectedCategory}"
@@ -64,7 +64,7 @@
                             ItemsSource="{Binding DietTags}"
                             SelectedItem="{Binding SelectedDietTag}"
                             ItemDisplayBinding="{Binding .}"
-                            WidthRequest="90"
+                            WidthRequest="100"
                             FontSize="18"
                             TextColor="Gray"
                             HorizontalOptions="FillAndExpand" />
