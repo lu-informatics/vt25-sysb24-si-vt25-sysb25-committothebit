@@ -51,6 +51,7 @@ public static class MauiProgram
 		//Use Singleton for ViewModels that manage ToListAsync
 		builder.Services.AddSingleton<IngredientsViewModel>();
 		builder.Services.AddSingleton<RecipesViewModel>();
+		builder.Services.AddSingleton<RecipesViewModel>();
 
 		//Use Transient that manage single detail Pages
 		builder.Services.AddTransient<IngredientDetailsViewModel>();
