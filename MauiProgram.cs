@@ -49,11 +49,11 @@ public static class MauiProgram
 		builder.Services.AddScoped<IUserIngredientService, UserIngredientService>();
 
 		//Use Singleton for ViewModels that manage ToListAsync
-		builder.Services.AddSingleton<IngredientsViewModel>();
 		builder.Services.AddSingleton<RecipesViewModel>();
 		builder.Services.AddSingleton<RecipesViewModel>();
 
 		//Use Transient that manage single detail Pages
+		builder.Services.AddTransient<IngredientsViewModel>();
 		builder.Services.AddTransient<IngredientDetailsViewModel>();
 		builder.Services.AddTransient<RecipeDetailsViewModel>();
 
@@ -67,7 +67,7 @@ public static class MauiProgram
 
 #if DEBUG
 		builder.Logging.AddDebug();
-#endif
+ #endif
 
 		return builder.Build();
 	}

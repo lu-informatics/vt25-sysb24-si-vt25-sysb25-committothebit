@@ -4,6 +4,7 @@ using Informatics.Appetite.Models;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using Informatics.Appetite.Pages;
+using System.Diagnostics;
 
 namespace Informatics.Appetite.ViewModels;
 
@@ -26,13 +27,15 @@ public partial class IngredientsViewModel : BaseViewModel
     public IAsyncRelayCommand RefreshCommand { get; }
     public IRelayCommand<int> OpenIngredientDetailsCommand { get; }
     public IRelayCommand OpenAddIngredientCommand { get; }
-    public IAsyncRelayCommand<UserIngredient> DeleteUserIngredientCommand { get; }
+    public IRelayCommand<UserIngredient> DeleteUserIngredientCommand { get; }
 
     private async Task LoadUserIngredientsAsync()
     {
+        if (IsBusy) return;
 
         try
         {
+            IsBusy = true;
             var userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(1);
             UserIngredients.Clear();
             foreach(var userIngredient in userIngredients)
@@ -43,6 +46,10 @@ public partial class IngredientsViewModel : BaseViewModel
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading user ingredients: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -55,18 +62,20 @@ public partial class IngredientsViewModel : BaseViewModel
 
     private async Task DeleteUserIngredientAsync(UserIngredient userIngredient)
     {
+        Debug.WriteLine($"[DeleteUserIngredientAsync] Clicked for ingredient: Id={userIngredient.IngredientId}, Name={userIngredient.Ingredient?.Name}");
         try
         {
             await _userIngredientService.DeleteUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
             UserIngredients.Remove(userIngredient);
-
-            // Force UI update
-            await Task.Delay(100);
-            OnPropertyChanged(nameof(UserIngredients));
+            Debug.WriteLine($"[DeleteUserIngredientAsync] Successfully removed ingredient: Id={userIngredient.IngredientId}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error deleting ingredient: {ex.Message}");
+            Debug.WriteLine($"[DeleteUserIngredientAsync] Exception: {ex.Message}");
+        }
+        finally
+        {
+            Debug.WriteLine("[DeleteUserIngredientAsync] Completed.");
         }
     }
 
