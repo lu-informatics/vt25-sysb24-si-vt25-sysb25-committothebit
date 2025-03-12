@@ -77,6 +77,17 @@ public class UserIngredientService : IUserIngredientService
             return false;
         }
 
+        // Check for and detach any duplicate tracked AppUser instance.
+        if (userIngredient.AppUser != null)
+        {
+            var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
+                .FirstOrDefault(e => e.Entity.Id == userIngredient.AppUser.Id);
+            if (trackedAppUser != null)
+            {
+                trackedAppUser.State = EntityState.Detached;
+            }
+        }
+
         _context.UserIngredients.Remove(userIngredient);
         await _context.SaveChangesAsync();
         return true;

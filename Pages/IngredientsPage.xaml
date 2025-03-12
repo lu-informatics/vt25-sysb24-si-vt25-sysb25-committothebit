@@ -60,7 +60,6 @@
                         <!-- Edit Button -->
                         <Button Grid.Row="0" Grid.Column="3"
                                 Text="Edit"
-                                Command="{Binding Path=BindingContext.DeleteUserIngredientCommand, Source={x:Reference IngredientsList}}"
                                 CommandParameter="{Binding .}"
                                 BackgroundColor="#FF2EB843"
                                 TextColor="White"
