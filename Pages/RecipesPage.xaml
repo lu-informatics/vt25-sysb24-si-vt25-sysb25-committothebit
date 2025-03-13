@@ -247,21 +247,17 @@
                                    TextColor="White"
                                    FontSize="18"
                                    FontAttributes="Bold"
-                                   Padding="8,2"/>      
+                                   Padding="8,2"/>     
                             </Border>
 
-                            <!-- More Options -->
-                            <Image Source="three_dots.png"
+                            <!-- All is Available -->
+                            <Image Source="checkmark.png"
                                  Grid.Column="4"
                                  WidthRequest="40"
                                  HeightRequest="40"
                                  HorizontalOptions="End"
-                                 VerticalOptions="Center">      
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Command="{Binding Path=BindingContext.OpenRecipeOptionsCommand, Source={x:Reference RecipesList}}"
-                                        CommandParameter="{Binding Id}" />
-                                </Image.GestureRecognizers>
+                                 IsVisible="{Binding HasAllIngredients}"
+                                 VerticalOptions="Center">
                             </Image>
                         </Grid>
                     </Frame>

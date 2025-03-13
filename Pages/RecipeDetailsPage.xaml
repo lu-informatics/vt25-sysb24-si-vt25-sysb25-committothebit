@@ -71,12 +71,15 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10" Margin="5">
-                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto">
+                                        <!-- Ingredient Name -->
                                         <Label Grid.Row="0" Grid.Column="0"
-                                               Text="{Binding Ingredient.Name}"
-                                               FontAttributes="Bold"
-                                               FontSize="16"
-                                               TextColor="Black"/>
+                                            Text="{Binding Ingredient.Name}"
+                                            FontAttributes="Bold"
+                                            FontSize="16"
+                                            TextColor="Black"/>
+                                        
+                                        <!-- Ingredient Amount -->
                                         <Label Grid.Row="0" Grid.Column="1">
                                             <Label.Text>
                                                 <MultiBinding StringFormat="{}{0} {1}">
@@ -85,6 +88,13 @@
                                                 </MultiBinding>
                                             </Label.Text>
                                         </Label>
+
+                                        <!-- Checkmark Icon (Visible when IsAvailable is true) -->
+                                        <Image Grid.Row="0" Grid.Column="2"
+                                            Source="checkmark.png"
+                                            WidthRequest="20" HeightRequest="20"
+                                            Margin="10,0,0,0"
+                                            IsVisible="{Binding IsAvailable}"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -93,11 +103,11 @@
                         <!-- Empty View -->
                         <CollectionView.EmptyView>
                             <Label Text="No ingredients found in this recipe."
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"
-                                   FontSize="14"
-                                   FontAttributes="Italic"
-                                   TextColor="Gray"/>
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                FontSize="14"
+                                FontAttributes="Italic"
+                                TextColor="Gray"/>
                         </CollectionView.EmptyView>
                     </CollectionView>
                 </VerticalStackLayout>
