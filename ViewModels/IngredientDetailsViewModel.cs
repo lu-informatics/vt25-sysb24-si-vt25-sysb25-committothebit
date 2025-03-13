@@ -75,6 +75,11 @@ public partial class IngredientDetailsViewModel : BaseViewModel
                 await Application.Current.MainPage.DisplayAlert("Error", "Please enter a number", "OK");
                 return;
             }
+            else if (parsedAmount < 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Please enter a positive number", "OK");
+                return;
+            }
 
             var userIngredient = new UserIngredient
             {
