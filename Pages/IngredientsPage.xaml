@@ -8,7 +8,7 @@
     <Grid RowDefinitions="Auto, *" Padding="15" RowSpacing="10">
 
         <!-- Add Ingredient Button -->
-        <Button Text="Add Ingredient"
+        <Button Text="Add/Edit Ingredient"
                 Command="{Binding OpenAddIngredientCommand}"
                 HorizontalOptions="Fill"
                 BackgroundColor="#27AE60"
@@ -58,19 +58,9 @@
                             </Label.Text>
                         </Label>
                         <!-- Edit Button -->
-                        <Button Grid.Row="0" Grid.Column="3"
-                                Text="Edit"
-                                CommandParameter="{Binding .}"
-                                BackgroundColor="#FF2EB843"
-                                TextColor="White"
-                                FontAttributes="Bold"
-                                CornerRadius="10"
-                                Padding="1"
-                                Margin="0,0,5,0"
-                                WidthRequest="100"
-                                VerticalOptions="Center"/>
+
                         <!-- Delete Button -->
-                        <Button Grid.Row="0" Grid.Column="4"
+                        <Button Grid.Row="0" Grid.Column="3"
                                 Text="Delete"
                                 Command="{Binding Path=BindingContext.DeleteUserIngredientCommand, Source={x:Reference IngredientsList}}"
                                 CommandParameter="{Binding .}"
