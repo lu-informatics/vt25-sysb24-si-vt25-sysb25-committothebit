@@ -58,10 +58,52 @@ public class UserIngredientService : IUserIngredientService
         var existingUserIngredient = await GetUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
         if (existingUserIngredient != null)
         {
+            // Detach any tracked instances of related entities
+            if (existingUserIngredient.AppUser != null)
+            {
+                var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
+                    .FirstOrDefault(e => e.Entity.Id == existingUserIngredient.AppUser.Id);
+                if (trackedAppUser != null)
+                {
+                    trackedAppUser.State = EntityState.Detached;
+                }
+            }
+
+            if (existingUserIngredient.Ingredient != null)
+            {
+                var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
+                    .FirstOrDefault(e => e.Entity.Id == existingUserIngredient.Ingredient.Id);
+                if (trackedIngredient != null)
+                {
+                    trackedIngredient.State = EntityState.Detached;
+                }
+            }
+
             existingUserIngredient.Amount = userIngredient.Amount;
             _context.UserIngredients.Update(existingUserIngredient);
             await _context.SaveChangesAsync();
             return existingUserIngredient;
+        }
+
+        // Detach any tracked instances of related entities for the new entity
+        if (userIngredient.AppUser != null)
+        {
+            var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
+                .FirstOrDefault(e => e.Entity.Id == userIngredient.AppUser.Id);
+            if (trackedAppUser != null)
+            {
+                trackedAppUser.State = EntityState.Detached;
+            }
+        }
+
+        if (userIngredient.Ingredient != null)
+        {
+            var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
+                .FirstOrDefault(e => e.Entity.Id == userIngredient.Ingredient.Id);
+            if (trackedIngredient != null)
+            {
+                trackedIngredient.State = EntityState.Detached;
+            }
         }
 
         _context.UserIngredients.Add(userIngredient);
