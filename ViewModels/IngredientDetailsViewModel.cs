@@ -80,6 +80,21 @@ public partial class IngredientDetailsViewModel : BaseViewModel
                 await Application.Current.MainPage.DisplayAlert("Error", "Please enter a positive number", "OK");
                 return;
             }
+            
+            // If the amount is 0, delete the user ingredient
+            else if (parsedAmount == 0)
+            {
+                var result = await _userIngredientService.DeleteUserIngredientAsync(1, SelectedIngredient.Id); // Hardcoded user id
+                if (result)
+                {
+                    await Shell.Current.GoToAsync(".."); // Navigate back
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "Failed to delete ingredient.", "OK");
+                }
+                return;
+            }
 
             var userIngredient = new UserIngredient
             {
