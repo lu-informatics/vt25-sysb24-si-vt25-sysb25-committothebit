@@ -130,8 +130,23 @@ public class UserIngredientService : IUserIngredientService
             }
         }
 
+        // Check for and detach any duplicate tracked Ingredient instance.
+        if (userIngredient.Ingredient != null)
+        {
+            var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
+                .FirstOrDefault(e => e.Entity.Id == userIngredient.Ingredient.Id);
+            if (trackedIngredient != null)
+            {
+                trackedIngredient.State = EntityState.Detached;
+            }
+        }
+
         _context.UserIngredients.Remove(userIngredient);
         await _context.SaveChangesAsync();
+
+        // Detach the deleted entity to ensure the context is not tracking it anymore
+        _context.Entry(userIngredient).State = EntityState.Detached;
+
         return true;
     }
 }
