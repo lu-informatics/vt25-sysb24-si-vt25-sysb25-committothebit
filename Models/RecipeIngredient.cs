@@ -20,4 +20,7 @@ public class RecipeIngredient
     [Required]
     [Column("amount", TypeName = "decimal(10,2)")]
     public double Amount { get; set; }
+
+    [NotMapped]
+    public bool IsAvailable {get; set;} = false;
 }

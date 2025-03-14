@@ -101,5 +101,9 @@ namespace Informatics.Appetite.Models
 
         // Navigation property
         public ICollection<RecipeIngredient> RecipeIngredients { get; set; } = new List<RecipeIngredient>();
+        
+    [NotMapped]
+    public bool HasAllIngredients{ get; set;} = false;
     }
+
 }

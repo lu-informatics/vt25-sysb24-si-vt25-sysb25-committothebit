@@ -3,6 +3,7 @@ using Informatics.Appetite.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Informatics.Appetite.ViewModels;
 
@@ -10,16 +11,19 @@ public partial class RecipeDetailsViewModel : BaseViewModel
 {
     private readonly IRecipeService _recipeService;
     private readonly IRecipeIngredientService _recipeIngredientService;
+    private readonly IUserIngredientService _userIngredientService;
+    private IEnumerable<UserIngredient> userIngredients;
 
     public ObservableCollection<RecipeIngredient> RecipeIngredients { get; } = new();
 
     [ObservableProperty]
     private Recipe recipe;
 
-    public RecipeDetailsViewModel(IRecipeService recipeService, IRecipeIngredientService recipeIngredientService)
+    public RecipeDetailsViewModel(IRecipeService recipeService, IRecipeIngredientService recipeIngredientService, IUserIngredientService userIngredientService)
     {
         _recipeService = recipeService;
         _recipeIngredientService = recipeIngredientService;
+        _userIngredientService = userIngredientService;
         SaveRecipeCommand = new AsyncRelayCommand(SaveRecipeAsync);
         DeleteRecipeCommand = new AsyncRelayCommand(DeleteRecipeAsync);
     }
@@ -45,9 +49,12 @@ public partial class RecipeDetailsViewModel : BaseViewModel
                 Recipe = await _recipeService.GetRecipeByIdAsync(recipeId) ?? new Recipe();
                 // Load associated ingredients
                 var recipeIngredients = await _recipeIngredientService.GetRecipeIngredientsByRecipeIdAsync(recipeId);
+                IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsAsync();
                 RecipeIngredients.Clear();
                 foreach (var recipeIngredient in recipeIngredients)
                 {
+                    recipeIngredient.IsAvailable = userIngredients.Any(ui => 
+                        ui.IngredientId == recipeIngredient.Ingredient.Id && ui.Amount>= recipeIngredient.Amount);
                     RecipeIngredients.Add(recipeIngredient);
                 }
             }

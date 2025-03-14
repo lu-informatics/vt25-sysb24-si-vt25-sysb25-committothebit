@@ -12,7 +12,9 @@ namespace Informatics.Appetite.ViewModels;
 public partial class RecipesViewModel : BaseViewModel
 {
     private readonly IRecipeService _recipeService;
+    private readonly IUserIngredientService _userIngredientService;
     private string _searchText;
+    private IEnumerable<UserIngredient> _userIngredients;
 
     public ObservableCollection<Recipe> Recipes { get; }
     public ObservableCollection<Recipe> FilteredRecipes { get; }
@@ -77,9 +79,10 @@ public string SelectedCategory
     public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
     public IRelayCommand OpenAddRecipeCommand { get; }
 
-    public RecipesViewModel(IRecipeService recipeService)
+    public RecipesViewModel(IRecipeService recipeService, IUserIngredientService userIngredientService)
     {
         _recipeService = recipeService;
+        _userIngredientService = userIngredientService;
         Recipes = new ObservableCollection<Recipe>();
         FilteredRecipes = new ObservableCollection<Recipe>();
         Title = "Recipes";
@@ -88,6 +91,7 @@ public string SelectedCategory
         OpenRecipeDetailsCommand = new RelayCommand<int>(OpenRecipeDetails);
         OpenAddRecipeCommand = new RelayCommand(OpenAddRecipe);
         
+        _ = LoadRecipesAsync();
         _ = LoadDifficultyLevelsAsync();
         _ = LoadCookingTimesAsync();
         _ = LoadDietTagsAsync();
@@ -101,11 +105,16 @@ public string SelectedCategory
     {
         IsBusy = true;
 
+        // Load user ingredients first
+        _userIngredients = await _userIngredientService.GetUserIngredientsAsync();
+
         // Load the main recipes
         var recipes = await _recipeService.GetRecipesAsync();
         Recipes.Clear();
-        foreach (var recipe in recipes)
+        foreach (var recipe in recipes){
+            recipe.HasAllIngredients = RecipeHasAllIngredients(recipe);
             Recipes.Add(recipe);
+        }
 
         // Also load Difficulty & CookingTime pickers here, awaited
         await LoadDifficultyLevelsAsync();
@@ -253,5 +262,35 @@ public string SelectedCategory
     private async void OpenRecipeDetails(int id)
     {
         await Shell.Current.GoToAsync($"{nameof(RecipeDetailsPage)}?recipeId={id}");
+    }
+
+    public bool RecipeHasAllIngredients(Recipe recipe)
+    {
+        IEnumerable<RecipeIngredient> RecipeIngredients = recipe.RecipeIngredients;
+
+        if (RecipeIngredients == null || !RecipeIngredients.Any())
+            return false;
+
+        foreach(RecipeIngredient recipeIngredient in RecipeIngredients)
+        {
+            bool hasIngredient = false;
+            bool hasAmount = false;
+            foreach(UserIngredient userIngredient in _userIngredients)
+            {
+                if (userIngredient.IngredientId == recipeIngredient.IngredientId)
+                {
+                    hasIngredient = true;
+                    if (userIngredient.Amount >= recipeIngredient.Amount)
+                    {
+                        hasAmount = true;
+                    }
+                }
+            }
+            if (!hasIngredient || !hasAmount)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

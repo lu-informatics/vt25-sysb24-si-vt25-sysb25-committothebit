@@ -71,13 +71,26 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10" Margin="5">
-                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
-                                        <Label Grid.Row="0" Grid.Column="0"
-                                               Text="{Binding Ingredient.Name}"
-                                               FontAttributes="Bold"
-                                               FontSize="16"
-                                               TextColor="Black"/>
-                                        <Label Grid.Row="0" Grid.Column="1">
+                                    <Grid ColumnDefinitions="30,*,Auto">
+                                        <!-- Fixed width column for checkmark -->
+                                        <Image Grid.Column="0"
+                                            Source="checkmark.png"
+                                            WidthRequest="20" 
+                                            HeightRequest="20"
+                                            HorizontalOptions="Start"
+                                            IsVisible="{Binding IsAvailable}"/>
+                                        
+                                        <!-- Ingredient Name in fixed position -->
+                                        <Label Grid.Column="1"
+                                            Text="{Binding Ingredient.Name}"
+                                            FontAttributes="Bold"
+                                            FontSize="16"
+                                            TextColor="Black"
+                                            HorizontalOptions="Start"/>
+                                        
+                                        <!-- Amount at the end -->
+                                        <Label Grid.Column="2"
+                                            HorizontalOptions="End">
                                             <Label.Text>
                                                 <MultiBinding StringFormat="{}{0} {1}">
                                                     <Binding Path="Amount" />
@@ -93,11 +106,11 @@
                         <!-- Empty View -->
                         <CollectionView.EmptyView>
                             <Label Text="No ingredients found in this recipe."
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"
-                                   FontSize="14"
-                                   FontAttributes="Italic"
-                                   TextColor="Gray"/>
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                FontSize="14"
+                                FontAttributes="Italic"
+                                TextColor="Gray"/>
                         </CollectionView.EmptyView>
                     </CollectionView>
                 </VerticalStackLayout>
