@@ -227,12 +227,12 @@ public string SelectedCategory
 {
         var tags = await _recipeService.GetDietTagsAsync();
         DietTags.Clear();
-        DietTags.Add("DietTag"); // Placeholder option
+        DietTags.Add("Diet Tag"); // Placeholder option
         foreach (var tag in tags)
         {
             DietTags.Add(tag);
         }
-        SelectedDietTag = "DietTag";
+        SelectedDietTag = "Diet Tag";
     }
 
     private async Task LoadCategoriesAsync()

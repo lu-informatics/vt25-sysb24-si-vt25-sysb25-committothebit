@@ -177,7 +177,7 @@
                                     <DataTrigger TargetType="Border" Binding="{Binding}" Value="Vegan">
                                         <Setter Property="BackgroundColor" Value="#8BC34A" />
                                         <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="1" />
+                                        <Setter Property="StrokeThickness" Value="0" />
                                         <Setter Property="StrokeShape">
                                             <RoundRectangle CornerRadius="5" />
                                         </Setter>
@@ -186,7 +186,7 @@
                                     <DataTrigger TargetType="Border" Binding="{Binding}" Value="Vegetarian">
                                         <Setter Property="BackgroundColor" Value="#4CAF50" />
                                         <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="1" />
+                                        <Setter Property="StrokeThickness" Value="0" />
                                         <Setter Property="StrokeShape">
                                             <RoundRectangle CornerRadius="5" />
                                         </Setter>
@@ -195,7 +195,7 @@
                                     <DataTrigger TargetType="Border" Binding="{Binding}" Value="Pescatarian">
                                         <Setter Property="BackgroundColor" Value="#03A9F4" />
                                         <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="1" />
+                                        <Setter Property="StrokeThickness" Value="0" />
                                         <Setter Property="StrokeShape">
                                             <RoundRectangle CornerRadius="5" />
                                         </Setter>
@@ -204,7 +204,7 @@
                                     <DataTrigger TargetType="Border" Binding="{Binding}" Value="Non-Vegetarian">
                                         <Setter Property="BackgroundColor" Value="#F44336" />
                                         <Setter Property="Stroke" Value="Black" />
-                                        <Setter Property="StrokeThickness" Value="1" />
+                                        <Setter Property="StrokeThickness" Value="0" />
                                         <Setter Property="StrokeShape">
                                             <RoundRectangle CornerRadius="5" />
                                         </Setter>
