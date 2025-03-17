@@ -13,7 +13,7 @@ public partial class AppShell : Shell
     public AppShell(IConfiguration config)
     {
         InitializeComponent();
-        _developerModeEnabled = config.GetValue<bool>("DeveloperMode");
+        _developerModeEnabled = config.GetValue<bool>("DeveloperMode", false);
 
         // Register routes.
         Routing.RegisterRoute(nameof(SignInPage), typeof(SignInPage));
