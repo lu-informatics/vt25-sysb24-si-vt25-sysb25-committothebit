@@ -5,18 +5,7 @@
              Title="My Ingredients">
 
     <!-- Use Grid to Structure Layout -->
-    <Grid RowDefinitions="Auto, *" Padding="15" RowSpacing="10">
-
-        <!-- Add Ingredient Button -->
-        <Button Text="Add/Edit Ingredient"
-                Command="{Binding OpenAddIngredientCommand}"
-                HorizontalOptions="Fill"
-                BackgroundColor="#27AE60"
-                TextColor="White"
-                FontAttributes="Bold"
-                CornerRadius="10"
-                Padding="10"
-                Grid.Row="0"/>
+    <Grid RowDefinitions="*, Auto" Padding="15" RowSpacing="10">
 
         <!-- CollectionView (Expands to Fill Remaining Space) -->
         <CollectionView x:Name="IngredientsList"
@@ -24,7 +13,7 @@
                         SelectionMode="Single"
                         ItemsUpdatingScrollMode="KeepItemsInView"
                         VerticalOptions="FillAndExpand"
-                        Grid.Row="1">
+                        Grid.Row="0">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -92,6 +81,17 @@
                        TextColor="Gray"/>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <!-- Add Ingredient Button -->
+        <Button Text="Add/Edit Ingredient"
+                Command="{Binding OpenAddIngredientCommand}"
+                HorizontalOptions="Fill"
+                BackgroundColor="#27AE60"
+                TextColor="White"
+                FontAttributes="Bold"
+                CornerRadius="10"
+                Padding="10"
+                Grid.Row="1"/>
 
     </Grid>
 
