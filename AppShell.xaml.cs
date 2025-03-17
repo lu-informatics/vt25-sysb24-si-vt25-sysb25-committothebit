@@ -2,16 +2,18 @@
 using Microsoft.Maui.Storage;
 using Microsoft.Maui.Controls;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Informatics.Appetite;
 
 public partial class AppShell : Shell
 {
-    private const bool DeveloperModeEnabled = false; // Set to true to skip login
+    private readonly bool _developerModeEnabled;
 
-    public AppShell()
+    public AppShell(IConfiguration config)
     {
         InitializeComponent();
+        _developerModeEnabled = config.GetValue<bool>("DeveloperMode");
 
         // Register routes.
         Routing.RegisterRoute(nameof(SignInPage), typeof(SignInPage));
@@ -29,7 +31,8 @@ public partial class AppShell : Shell
     {
         await Task.Delay(100); // Ensures Shell is fully loaded before navigation
 
-        if (!DeveloperModeEnabled && !Preferences.Get("IsLoggedIn", false))
+
+        if (!_developerModeEnabled && !Preferences.Get("IsLoggedIn", false))
         {
             // Resolve the SignInPage from the DI container.
             var signInPage = App.Container.GetRequiredService<SignInPage>();

@@ -34,12 +34,10 @@ public static class MauiProgram
             }
         }
 
-        // Register the RecipeContext with an in-memory database for testing.
         builder.Services.AddDbContext<RecipeContext>(options =>
         {
             var connectionString = builder.Configuration.GetConnectionString("AppetiteDatabase");
             options.UseSqlServer(connectionString);
-            //options.UseInMemoryDatabase("TestDatabase");        });
         });
 
         // Register services.
