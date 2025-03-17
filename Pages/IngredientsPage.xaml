@@ -5,18 +5,20 @@
              Title="My Ingredients">
 
     <!-- Use Grid to Structure Layout -->
-    <Grid RowDefinitions="Auto, *" Padding="15" RowSpacing="10">
+    <Grid RowDefinitions="Auto, *, Auto" Padding="15" RowSpacing="10">
 
-        <!-- Add Ingredient Button -->
-        <Button Text="Add/Edit Ingredient"
-                Command="{Binding OpenAddIngredientCommand}"
-                HorizontalOptions="Fill"
-                BackgroundColor="#27AE60"
-                TextColor="White"
-                FontAttributes="Bold"
-                CornerRadius="10"
-                Padding="10"
-                Grid.Row="0"/>
+        <!-- Headers Row -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,*" Padding="10" BackgroundColor="White">
+            <Label Grid.Column="0" Text="Ingredient Name" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+            <Label Grid.Column="1" Text="Category" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="Amount" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+
+            <BoxView Grid.Row="2" Grid.ColumnSpan="4"
+                HeightRequest="1"
+                BackgroundColor="#FFA1A1A1"
+                VerticalOptions="End"
+                Margin="0,50,0,0"/>
+        </Grid>
 
         <!-- CollectionView (Expands to Fill Remaining Space) -->
         <CollectionView x:Name="IngredientsList"
@@ -28,7 +30,7 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10" ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto,Auto" BackgroundColor="White">
+                    <Grid Padding="10" ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto,Auto" BackgroundColor="White">
                         <!-- Ingredient Name -->
                         <Label Grid.Row="0" Grid.Column="0"
                                Text="{Binding Ingredient.Name}"
@@ -40,13 +42,13 @@
                         <!-- Ingredient Category -->
                         <Label Grid.Row="0" Grid.Column="1"
                                Text="{Binding Ingredient.Category}"
-                               FontSize="16"
+                               FontSize="18"
                                AutomationId="IngredientCategory"
                                TextColor="Gray"
                                VerticalOptions="Center" />
                         <!-- Ingredient Amount and Unit -->
                         <Label Grid.Row="0" Grid.Column="2"
-                               FontSize="16"
+                               FontSize="18"
                                AutomationId="IngredientAmount"
                                TextColor="Black"
                                VerticalOptions="Center">
@@ -78,6 +80,12 @@
                                                             Source={x:Reference IngredientsList}}"
                                                   CommandParameter="{Binding Id}"/>
                         </Grid.GestureRecognizers>
+                        <!-- Bottom Border -->
+                        <BoxView Grid.Row="2" Grid.ColumnSpan="5"
+                                 HeightRequest="1"
+                                 BackgroundColor="#cccccc"
+                                 VerticalOptions="End"
+                                 Margin="0,20,0,0"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
@@ -92,6 +100,17 @@
                        TextColor="Gray"/>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <!-- Add Ingredient Button -->
+        <Button Text="Add/Edit Ingredient"
+                Command="{Binding OpenAddIngredientCommand}"
+                HorizontalOptions="Fill"
+                BackgroundColor="#27AE60"
+                TextColor="White"
+                FontAttributes="Bold"
+                CornerRadius="10"
+                Padding="10"
+                Grid.Row="2"/>
 
     </Grid>
 

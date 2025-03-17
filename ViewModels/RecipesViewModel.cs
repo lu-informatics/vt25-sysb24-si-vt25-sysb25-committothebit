@@ -63,7 +63,7 @@ public string SelectedCategory
         }
     }
 }
-    private string _selectedDietTag = "DietTag";
+    private string _selectedDietTag = "Diet tag";
         public string SelectedDietTag
         {
             get => _selectedDietTag;
@@ -147,7 +147,7 @@ public string SelectedCategory
             r.CookingTime.ToString() == SelectedCookingTime;
 
         bool matchesDiet = true;
-        if (!string.IsNullOrWhiteSpace(SelectedDietTag) && SelectedDietTag != "DietTag")
+        if (!string.IsNullOrWhiteSpace(SelectedDietTag) && SelectedDietTag != "Diet tag")
         {
             var recipeDietTags = r.RecipeIngredients
                 .Select(ri => ri.Ingredient?.DietTag)
@@ -227,12 +227,12 @@ public string SelectedCategory
 {
         var tags = await _recipeService.GetDietTagsAsync();
         DietTags.Clear();
-        DietTags.Add("DietTag"); // Placeholder option
+        DietTags.Add("Diet Tag"); // Placeholder option
         foreach (var tag in tags)
         {
             DietTags.Add(tag);
         }
-        SelectedDietTag = "DietTag";
+        SelectedDietTag = "Diet Tag";
     }
 
     private async Task LoadCategoriesAsync()
