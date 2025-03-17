@@ -52,7 +52,9 @@ public static class MauiProgram
         // Register ViewModels.
         builder.Services.AddSingleton<IngredientsViewModel>();
         builder.Services.AddSingleton<RecipesViewModel>();
-        builder.Services.AddScoped<SignInViewModel>();
+        builder.Services.AddSingleton<SignInViewModel>();
+
+        // Register ViewModels with transient lifetimes.
         builder.Services.AddTransient<IngredientDetailsViewModel>();
         builder.Services.AddTransient<RecipeDetailsViewModel>();
 
