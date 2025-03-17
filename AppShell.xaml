@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Informatics.Appetite"
     Title="Informatics.Appetite"
-    Shell.FlyoutBehavior="Locked">
+    Shell.FlyoutBehavior="Locked"
+    Shell.FlyoutWidth="200">
 
     <FlyoutItem Title="Recipes" Icon="recipe_logo.png">
         <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />
