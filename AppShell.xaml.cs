@@ -25,32 +25,45 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(RecipeDetailsPage), typeof(RecipeDetailsPage));
         Routing.RegisterRoute(nameof(IngredientDetailsPage), typeof(IngredientDetailsPage));
 
-        // Initially hide the TabBar.
-        Shell.SetTabBarIsVisible(this, false);
-
         // Check authentication.
         CheckAuthentication();
     }
 
     private async void CheckAuthentication()
     {
-        await Task.Delay(100); // Ensures Shell is fully loaded before navigation
+        await Task.Delay(100);
 
         if (_developerModeEnabled)
         {
-            // Just ensure the admin user exists
+            // Developer mode: automatically use the admin user.
             var adminUser = await EnsureDevUserExists();
             if (adminUser != null)
             {
-                // Directly set as authenticated without password check
                 _appUserService.SetCurrentUser(adminUser);
-                Shell.SetTabBarIsVisible(this, true);
             }
+            UpdateCurrentUserDisplay();
         }
-        else if (!Preferences.Get("IsLoggedIn", false))
+        else
         {
             var signInPage = App.Container.GetRequiredService<SignInPage>();
+            signInPage.Disappearing += (s, e) =>
+            {
+                UpdateCurrentUserDisplay();
+            };
             await this.Navigation.PushModalAsync(new NavigationPage(signInPage));
+        }
+    }
+
+    private async void UpdateCurrentUserDisplay()
+    {
+        try
+        {
+            var currentUser = await _appUserService.GetCurrentUserAsync();
+            CurrentUserLabel.Text = $"Signed in: {currentUser.Username}";
+        }
+        catch (Exception ex)
+        {
+            CurrentUserLabel.Text = "User not found";
         }
     }
 
@@ -59,7 +72,6 @@ public partial class AppShell : Shell
         var adminUser = await _appUserService.GetUserByUsernameAsync("admin");
         if (adminUser == null)
         {
-            // Create admin user with username/password both as "admin"
             adminUser = await _appUserService.CreateUserAsync("admin", "admin");
         }
         return adminUser;
