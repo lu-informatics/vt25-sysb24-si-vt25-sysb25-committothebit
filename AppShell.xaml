@@ -17,4 +17,8 @@
         <ShellContent ContentTemplate="{DataTemplate local:Pages.IngredientsPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="Magic Recipe Generator" Icon="magic_recipe.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.MagicRecipeGeneratorPage}" />
+    </FlyoutItem>
+
 </Shell>

@@ -80,6 +80,9 @@
 
     <ItemGroup>
         <Compile Update="App.xaml.cs" />
+        <Compile Update="Pages/MagicRecipeGeneratorPage.xaml.cs">
+          <DependentUpon>MagicRecipeGeneratorPage.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
