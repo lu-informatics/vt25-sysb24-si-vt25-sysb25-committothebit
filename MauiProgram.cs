@@ -34,6 +34,12 @@ public static class MauiProgram
             }
         }
 
+        var openAiKey = builder.Configuration["AppSettings:ApiKey"];
+        if (string.IsNullOrEmpty(openAiKey))
+        {
+            throw new Exception("OpenAI API Key is missing from appsettings.json");
+        }
+
         builder.Services.AddDbContext<RecipeContext>(options =>
         {
             var connectionString = builder.Configuration.GetConnectionString("AppetiteDatabase");
@@ -41,7 +47,9 @@ public static class MauiProgram
         });
 
         // Register services.
+        builder.Services.AddSingleton(openAiKey);
         builder.Services.AddSingleton<IAppUserService, AppUserService>(); // Singleton for the app, since we want to store current user on there
+        builder.Services.AddSingleton<IMagicRecipeGeneratorService, MagicRecipeGeneratorService>();
         builder.Services.AddScoped<IIngredientService, IngredientService>();
         builder.Services.AddScoped<IRecipeService, RecipeService>();
         builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();

@@ -8,10 +8,5 @@
             Text="Prepare the base: Heat olive oil in a large pan over medium heat. Add chopped onion, garlic, carrot, and celery. Sauté for about 5 minutes until softened. Brown the meat: Add ground beef and cook until browned, breaking it apart with a spoon. Drain excess fat if necessary. Build the sauce: Stir in tomato paste, crushed tomatoes, and beef broth (or wine). Add oregano, basil, bay leaf, sugar, salt, and pepper. Simmer: Reduce heat to low, cover, and let the sauce simmer for at least 30 minutes, stirring occasionally. The longer it simmers, the better the flavor."
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-        <Button
-            Text="Generate Recipe"
-            Clicked="GenerateRecipeButton_Clicked"
-            VerticalOptions="Center"
-            HorizontalOptions="Center" />
     </VerticalStackLayout>
 </ContentPage>
