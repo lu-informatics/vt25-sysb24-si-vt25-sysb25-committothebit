@@ -41,7 +41,7 @@ public static class MauiProgram
         });
 
         // Register services.
-        builder.Services.AddScoped<IAppUserService, AppUserService>();
+        builder.Services.AddSingleton<IAppUserService, AppUserService>(); // Singleton for the app, since we want to store current user on there
         builder.Services.AddScoped<IIngredientService, IngredientService>();
         builder.Services.AddScoped<IRecipeService, RecipeService>();
         builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();

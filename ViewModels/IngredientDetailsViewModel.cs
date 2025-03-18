@@ -3,6 +3,7 @@ using Informatics.Appetite.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Informatics.Appetite.ViewModels;
 
@@ -11,7 +12,7 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     private readonly IIngredientService _ingredientService;
     private readonly IRecipeIngredientService _recipeIngredientService;
     private readonly IUserIngredientService _userIngredientService;
-    
+    private readonly IAppUserService _appUserService;
     public ObservableCollection<Ingredient> Ingredients { get; } = new();
     public ObservableCollection<Recipe> Recipes { get; } = new();
 
@@ -22,11 +23,12 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     private string _amount;
 
 
-    public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService, IUserIngredientService userIngredientService)
+    public IngredientDetailsViewModel(IIngredientService ingredientService, IRecipeIngredientService recipeIngredientService, IUserIngredientService userIngredientService, IAppUserService appUserService)
     {
         _ingredientService = ingredientService;
         _recipeIngredientService = recipeIngredientService;
         _userIngredientService = userIngredientService;
+        _appUserService = appUserService;
         Ingredients = new ObservableCollection<Ingredient>();
         Recipes = new ObservableCollection<Recipe>();
 
@@ -66,6 +68,8 @@ public partial class IngredientDetailsViewModel : BaseViewModel
     {
         if (IsBusy) return;
 
+        AppUser user = await _appUserService.GetCurrentUserAsync();
+
         try
         {
             IsBusy = true;
@@ -85,7 +89,7 @@ public partial class IngredientDetailsViewModel : BaseViewModel
                 bool confirm = await Application.Current.MainPage.DisplayAlert("Confirm", "Are you sure you want to set the amount to 0? This will delete the ingredient from My Ingredients.", "OK", "Cancel");
                 if (confirm)
                 {
-                    var result = await _userIngredientService.DeleteUserIngredientAsync(1, SelectedIngredient.Id); // Hardcoded user id
+                    var result = await _userIngredientService.DeleteUserIngredientAsync(user.Id, SelectedIngredient.Id); // Hardcoded user id
                     if (result)
                     {
                         await Shell.Current.GoToAsync(".."); // Navigate back
@@ -100,10 +104,11 @@ public partial class IngredientDetailsViewModel : BaseViewModel
 
             var userIngredient = new UserIngredient
             {
-                AppUserId = 1, // Hardcoded user id
+                AppUserId = user.Id,
                 IngredientId = SelectedIngredient.Id,
                 Amount = parsedAmount
             };
+            Debug.WriteLine("HEEEELLLOO");
             await _userIngredientService.SaveUserIngredientAsync(userIngredient);
             await Shell.Current.GoToAsync(".."); // Navigate back
         }
