@@ -59,6 +59,7 @@ namespace Informatics.Appetite.ViewModels
                 var createdUser = await _appUserService.CreateUserAsync(Username, Password);
                 if (createdUser != null)
                 {
+                    _appUserService.SetCurrentUser(createdUser);
                     // Dismiss the sign-in modal.
                     await Shell.Current.Navigation.PopModalAsync();
                     // Show the TabBar.
