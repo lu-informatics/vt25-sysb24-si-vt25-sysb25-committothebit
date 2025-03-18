@@ -12,7 +12,7 @@
         <Image Source="bonappetitee.png"
                HeightRequest="450"
                HorizontalOptions="Center"
-               Margin="0,0,0,100"
+               Margin="0,0,0,0"
                AutomationId="AppLogo"/>
 
         <!-- Username Entry -->
