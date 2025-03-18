@@ -10,14 +10,52 @@ namespace Informatics.Appetite.Services
     public class AppUserService : IAppUserService
     {
         private readonly RecipeContext _context;
+        private AppUser? _currentUser;
+        private int _currentUserId;
+        private bool _isAuthenticated;
+        
         // Constants for PBKDF2
         private const int SaltSize = 32;      // Size in bytes
         private const int HashSize = 32;      // Size in bytes (256 bits)
-        private const int Iterations = 10000; // Number of iterations
+        private const int Iterations = 10000;  // Number of iterations
 
         public AppUserService(RecipeContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        public async Task<AppUser> GetCurrentUserAsync()
+        {
+            if (_currentUser == null)
+            {
+                // Just fetch the existing admin user - don't try to create it again
+                var adminUser = await _context.AppUsers
+                    .FirstOrDefaultAsync(u => u.Username == "admin");
+                
+                if (adminUser != null)
+                {
+                    // Store the user in memory
+                    _currentUser = adminUser;
+                    _currentUserId = adminUser.Id;
+                    _isAuthenticated = true;
+                }
+                else
+                {
+                    Console.WriteLine("Warning: Admin user not found in database. This should be created by AppShell.");
+                    throw new InvalidOperationException("Admin user not found. Ensure it's created at startup.");
+                }
+            }
+            
+            return _currentUser;
+        }
+
+        public AppUser GetCurrentUser()
+        {
+            if (_currentUser == null)
+            {
+                throw new InvalidOperationException("Current user not initialized. Call GetCurrentUserAsync first.");
+            }
+            return _currentUser;
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
@@ -91,7 +129,15 @@ namespace Informatics.Appetite.Services
 
             // Compute hash for the provided password using the stored salt.
             var hashedInput = HashPassword(password, user.Salt, Iterations, HashSize);
-            return user.PasswordHash.SequenceEqual(hashedInput) ? user : null;
+            if (user.PasswordHash.SequenceEqual(hashedInput))
+            {
+                // Store the authenticated user
+                _currentUser = user;
+                _currentUserId = user.Id;
+                _isAuthenticated = true;
+                return user;
+            }
+            return null;
         }
 
         // Create a new user, storing a salted and hashed password.
@@ -137,6 +183,25 @@ namespace Informatics.Appetite.Services
             {
                 return pbkdf2.GetBytes(hashByteSize);
             }
+        }
+
+        public bool IsAuthenticated() => _isAuthenticated;
+        
+        public void SignOut()
+        {
+            _currentUser = null;
+            _currentUserId = 0;
+            _isAuthenticated = false;
+        }
+
+        public void SetCurrentUser(AppUser user)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            
+            _currentUser = user;
+            _currentUserId = user.Id;
+            _isAuthenticated = true;
         }
     }
 }

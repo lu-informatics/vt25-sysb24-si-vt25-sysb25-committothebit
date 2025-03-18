@@ -11,10 +11,12 @@ namespace Informatics.Appetite.ViewModels;
 public partial class IngredientsViewModel : BaseViewModel
 {
     private readonly IUserIngredientService _userIngredientService;
+    private readonly IAppUserService _appUserService;
     public ObservableCollection<UserIngredient> UserIngredients { get; }
-    public IngredientsViewModel(IUserIngredientService userIngredientService)
+    public IngredientsViewModel(IUserIngredientService userIngredientService, IAppUserService appUserService)
     {
         _userIngredientService = userIngredientService;
+        _appUserService = appUserService;
         UserIngredients = new ObservableCollection<UserIngredient>();
         Title = "My Ingredients";
 
@@ -36,7 +38,9 @@ public partial class IngredientsViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            var userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(1);
+            AppUser appUser = await _appUserService.GetCurrentUserAsync();
+            int appUserId = appUser.Id;
+            var userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
             UserIngredients.Clear();
             foreach(var userIngredient in userIngredients)
             {

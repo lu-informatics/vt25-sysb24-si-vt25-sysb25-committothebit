@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using System.Linq;
-
+using System.Diagnostics;
 
 namespace Informatics.Appetite.ViewModels;
 
@@ -13,6 +13,7 @@ public partial class RecipesViewModel : BaseViewModel
 {
     private readonly IRecipeService _recipeService;
     private readonly IUserIngredientService _userIngredientService;
+    private readonly IAppUserService _appUserService;
     private string _searchText;
     private IEnumerable<UserIngredient> _userIngredients;
 
@@ -79,10 +80,11 @@ public string SelectedCategory
     public IRelayCommand<int> OpenRecipeDetailsCommand { get; }
     public IRelayCommand OpenAddRecipeCommand { get; }
 
-    public RecipesViewModel(IRecipeService recipeService, IUserIngredientService userIngredientService)
+    public RecipesViewModel(IRecipeService recipeService, IUserIngredientService userIngredientService, IAppUserService appUserService)
     {
         _recipeService = recipeService;
         _userIngredientService = userIngredientService;
+        _appUserService = appUserService;
         Recipes = new ObservableCollection<Recipe>();
         FilteredRecipes = new ObservableCollection<Recipe>();
         Title = "Recipes";
@@ -98,106 +100,77 @@ public string SelectedCategory
         _ = LoadCategoriesAsync();
     }
 
-    private async Task LoadRecipesAsync()
-{
-    if (IsBusy) return;
-    try
+    public async Task LoadRecipesAsync()
     {
-        IsBusy = true;
+        if (IsBusy) return;
+        try
+        {
+            IsBusy = true;
+            Debug.WriteLine("LoadRecipesAsync: Starting to load data");
 
-        // Load user ingredients first
-        _userIngredients = await _userIngredientService.GetUserIngredientsAsync();
+            // Load user ingredients first
+            Debug.WriteLine("LoadRecipesAsync: Getting current user");
+            AppUser appUser = await _appUserService.GetCurrentUserAsync();
+            int appUserId = appUser.Id;
+            Debug.WriteLine($"LoadRecipesAsync: Got user with ID {appUserId}");
+            
+            Debug.WriteLine("LoadRecipesAsync: Getting user ingredients");
+            _userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
+            Debug.WriteLine($"LoadRecipesAsync: Got {_userIngredients?.Count() ?? 0} user ingredients");
 
-        // Load the main recipes
-        var recipes = await _recipeService.GetRecipesAsync();
-        Recipes.Clear();
-        foreach (var recipe in recipes){
-            recipe.HasAllIngredients = RecipeHasAllIngredients(recipe);
-            Recipes.Add(recipe);
+            // Load the main recipes
+            Debug.WriteLine("LoadRecipesAsync: Getting recipes");
+            var recipes = await _recipeService.GetRecipesAsync();
+            Debug.WriteLine($"LoadRecipesAsync: Got {recipes?.Count() ?? 0} recipes");
+            
+            Recipes.Clear();
+            
+            if (recipes != null)
+            {
+                foreach (var recipe in recipes)
+                {
+                    recipe.HasAllIngredients = RecipeHasAllIngredients(recipe);
+                    Recipes.Add(recipe);
+                }
+                Debug.WriteLine($"LoadRecipesAsync: Added {Recipes.Count} recipes to collection");
+            }
+            else
+            {
+                Debug.WriteLine("ERROR: recipes is null!");
+            }
+
+            FilterRecipes();
+            Debug.WriteLine($"LoadRecipesAsync: After filtering: {FilteredRecipes.Count} recipes");
         }
-
-        // Also load Difficulty & CookingTime pickers here, awaited
-        await LoadDifficultyLevelsAsync();
-        await LoadCookingTimesAsync();
-        await LoadDietTagsAsync();
-        await LoadCategoriesAsync();
-
-        // Finally filter after everything is loaded
-        FilterRecipes();
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"ERROR loading recipes: {ex.Message}");
+            Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
+        finally
+        {
+            IsBusy = false;
+            Debug.WriteLine("LoadRecipesAsync: Completed");
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error loading recipes: {ex.Message}");
-    }
-    finally
-    {
-        IsBusy = false;
-    }
-}
 
     private void FilterRecipes()
-{
-    var filtered = Recipes.Where(r =>
     {
-        // Existing filters: search, difficulty, cooking time, and diet
-        bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) || r.Name.ToLower().Contains(SearchText.ToLower());
-        bool matchesDifficulty = string.IsNullOrWhiteSpace(SelectedDifficulty) || SelectedDifficulty == "Difficulty" ||
-            (r.DifficultyLevel != null && r.DifficultyLevel.Equals(SelectedDifficulty, StringComparison.OrdinalIgnoreCase));
-        bool matchesCookingTime = string.IsNullOrWhiteSpace(SelectedCookingTime) || SelectedCookingTime == "Cooking time" ||
-            r.CookingTime.ToString() == SelectedCookingTime;
-
-        bool matchesDiet = true;
-        if (!string.IsNullOrWhiteSpace(SelectedDietTag) && SelectedDietTag != "Diet tag")
+        try 
         {
-            var recipeDietTags = r.RecipeIngredients
-                .Select(ri => ri.Ingredient?.DietTag)
-                .Where(tag => !string.IsNullOrWhiteSpace(tag))
-                .Distinct()
-                .ToList();
-
-            if (SelectedDietTag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase))
+            // Just copy all recipes to filtered recipes for debugging
+            FilteredRecipes.Clear();
+            foreach (var recipe in Recipes)
             {
-                matchesDiet = true;
+                FilteredRecipes.Add(recipe);
             }
-            else if (SelectedDietTag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase))
-            {
-                matchesDiet = !recipeDietTags.Any(tag => tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase));
-            }
-            else if (SelectedDietTag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase))
-            {
-                matchesDiet = !recipeDietTags.Any(tag =>
-                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) ||
-                    tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase));
-            }
-            else if (SelectedDietTag.Equals("Vegan", StringComparison.OrdinalIgnoreCase))
-            {
-                matchesDiet = !recipeDietTags.Any(tag =>
-                    tag.Equals("Non-Vegetarian", StringComparison.OrdinalIgnoreCase) ||
-                    tag.Equals("Pescatarian", StringComparison.OrdinalIgnoreCase) ||
-                    tag.Equals("Vegetarian", StringComparison.OrdinalIgnoreCase));
-            }
+            Debug.WriteLine($"FilterRecipes: Added {FilteredRecipes.Count} recipes");
         }
-
-        // New filter: Category filtering
-        bool matchesCategory = true;
-        if (!string.IsNullOrWhiteSpace(SelectedCategory) && SelectedCategory != "Category")
+        catch (Exception ex)
         {
-            // Check if any ingredient in the recipe has the selected category.
-            matchesCategory = r.RecipeIngredients.Any(ri =>
-                ri.Ingredient != null &&
-                ri.Ingredient.Category.Equals(SelectedCategory, StringComparison.OrdinalIgnoreCase));
+            Debug.WriteLine($"ERROR in FilterRecipes: {ex.Message}");
         }
-
-        return matchesSearch && matchesDifficulty && matchesCookingTime && matchesDiet && matchesCategory;
-    }).ToList();
-
-    FilteredRecipes.Clear();
-    foreach (var recipe in filtered)
-    {
-        FilteredRecipes.Add(recipe);
     }
-}
-
 
     private async Task LoadDifficultyLevelsAsync()
     {
@@ -224,7 +197,7 @@ public string SelectedCategory
     }
 
     private async Task LoadDietTagsAsync()
-{
+    {
         var tags = await _recipeService.GetDietTagsAsync();
         DietTags.Clear();
         DietTags.Add("Diet Tag"); // Placeholder option
@@ -236,16 +209,16 @@ public string SelectedCategory
     }
 
     private async Task LoadCategoriesAsync()
-{
-    var categories = await _recipeService.GetCategoriesAsync();
-    Categories.Clear();
-    Categories.Add("Category");  // Placeholder option
-    foreach (var category in categories)
     {
-        Categories.Add(category);
+        var categories = await _recipeService.GetCategoriesAsync();
+        Categories.Clear();
+        Categories.Add("Category");  // Placeholder option
+        foreach (var category in categories)
+        {
+            Categories.Add(category);
+        }
+        SelectedCategory = "Category";
     }
-    SelectedCategory = "Category";
-}
 
     public string SearchText
     {

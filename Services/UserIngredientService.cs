@@ -25,12 +25,19 @@ public class UserIngredientService : IUserIngredientService
 
     public async Task<IEnumerable<UserIngredient>> GetUserIngredientsByUserIdAsync(int userId)
     {
-        return await _context.UserIngredients
-            .AsNoTracking()
-            .Include(ui => ui.AppUser)
-            .Include(ui => ui.Ingredient)
-            .Where(ui => ui.AppUserId == userId)
-            .ToListAsync();
+        try
+        {
+            return await _context.UserIngredients
+                .Include(ui => ui.Ingredient)  // Include the Ingredient navigation property
+                .Where(ui => ui.AppUserId == userId)
+                .AsNoTracking()  // Add this to prevent tracking issues
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetUserIngredientsByUserIdAsync: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<IEnumerable<AppUser>> GetUsersByIngredientIdAsync(int ingredientId)
