@@ -7,7 +7,7 @@
     Title="Informatics.Appetite"
     Shell.FlyoutBehavior="Locked"
     Shell.FlyoutWidth="200"
-    Shell.FlyoutBackgroundColor="White">
+    Shell.FlyoutBackgroundColor="#e3e3e3">
 
     <FlyoutItem Title="Recipes" Icon="recipe_logo.png">
         <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />

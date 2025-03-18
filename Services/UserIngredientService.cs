@@ -2,6 +2,7 @@ using Informatics.Appetite.Contexts;
 using Informatics.Appetite.Interfaces;
 using Informatics.Appetite.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Informatics.Appetite.Services;
 
@@ -25,12 +26,19 @@ public class UserIngredientService : IUserIngredientService
 
     public async Task<IEnumerable<UserIngredient>> GetUserIngredientsByUserIdAsync(int userId)
     {
-        return await _context.UserIngredients
-            .AsNoTracking()
-            .Include(ui => ui.AppUser)
-            .Include(ui => ui.Ingredient)
-            .Where(ui => ui.AppUserId == userId)
-            .ToListAsync();
+        try
+        {
+            return await _context.UserIngredients
+                .Include(ui => ui.Ingredient)  // Include the Ingredient navigation property
+                .Where(ui => ui.AppUserId == userId)
+                .AsNoTracking()  // Add this to prevent tracking issues
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetUserIngredientsByUserIdAsync: {ex.Message}");
+            throw;
+        }
     }
 
     public async Task<IEnumerable<AppUser>> GetUsersByIngredientIdAsync(int ingredientId)
@@ -46,76 +54,81 @@ public class UserIngredientService : IUserIngredientService
 
     public async Task<UserIngredient?> GetUserIngredientAsync(int userId, int ingredientId)
     {
-        return await _context.UserIngredients
+        Debug.WriteLine($"GetUserIngredientAsync: Looking for User={userId}, Ingredient={ingredientId}");
+        
+        var result = await _context.UserIngredients
             .AsNoTracking()
             .Include(ui => ui.AppUser)
             .Include(ui => ui.Ingredient)
             .FirstOrDefaultAsync(ui => ui.AppUserId == userId && ui.IngredientId == ingredientId);
+        
+        Debug.WriteLine($"GetUserIngredientAsync: Found? {result != null}");
+        
+        return result;
     }
 
     public async Task<UserIngredient> SaveUserIngredientAsync(UserIngredient userIngredient)
     {
+        Debug.WriteLine($"SaveUserIngredientAsync: Starting with User={userIngredient.AppUserId}, Ingredient={userIngredient.IngredientId}");
+        
         var existingUserIngredient = await GetUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
-        if (existingUserIngredient != null)
+        Debug.WriteLine($"SaveUserIngredientAsync: existingUserIngredient found? {existingUserIngredient != null}");
+        
+        try
         {
-            // Detach any tracked instances of related entities
-            if (existingUserIngredient.AppUser != null)
+            if (existingUserIngredient != null)
             {
-                var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
-                    .FirstOrDefault(e => e.Entity.Id == existingUserIngredient.AppUser.Id);
-                if (trackedAppUser != null)
-                {
-                    trackedAppUser.State = EntityState.Detached;
-                }
+                // Update existing ingredient
+                Debug.WriteLine($"SaveUserIngredientAsync: Updating existing entry, old amount: {existingUserIngredient.Amount}, new amount: {userIngredient.Amount}");
+                
+                // Detach the current entity from tracking
+                _context.Entry(existingUserIngredient).State = EntityState.Detached;
+                
+                // Update properties on the entity we're saving
+                _context.UserIngredients.Attach(userIngredient);
+                _context.Entry(userIngredient).State = EntityState.Modified;
             }
-
-            if (existingUserIngredient.Ingredient != null)
+            else
             {
-                var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
-                    .FirstOrDefault(e => e.Entity.Id == existingUserIngredient.Ingredient.Id);
-                if (trackedIngredient != null)
+                // Adding new ingredient
+                Debug.WriteLine($"SaveUserIngredientAsync: Adding new entry");
+                
+                // Check if the entity is being tracked already
+                var trackedEntity = _context.UserIngredients.Local.FirstOrDefault(
+                    e => e.AppUserId == userIngredient.AppUserId && e.IngredientId == userIngredient.IngredientId);
+                
+                if (trackedEntity != null)
                 {
-                    trackedIngredient.State = EntityState.Detached;
+                    Debug.WriteLine($"SaveUserIngredientAsync: Found tracked entity, detaching it");
+                    _context.Entry(trackedEntity).State = EntityState.Detached;
                 }
+                
+                _context.UserIngredients.Add(userIngredient);
             }
-
-            existingUserIngredient.Amount = userIngredient.Amount;
-            _context.UserIngredients.Update(existingUserIngredient);
+            
             await _context.SaveChangesAsync();
-            return existingUserIngredient;
-        }
+            Debug.WriteLine($"SaveUserIngredientAsync: Changes saved to database");
 
-        // Detach any tracked instances of related entities for the new entity
-        if (userIngredient.AppUser != null)
+            // Get fresh copy from database to ensure all related entities are loaded
+            return await GetUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
+        }
+        catch (Exception ex)
         {
-            var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
-                .FirstOrDefault(e => e.Entity.Id == userIngredient.AppUser.Id);
-            if (trackedAppUser != null)
-            {
-                trackedAppUser.State = EntityState.Detached;
-            }
+            Debug.WriteLine($"SaveUserIngredientAsync ERROR: {ex.Message}");
+            throw;
         }
-
-        if (userIngredient.Ingredient != null)
-        {
-            var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
-                .FirstOrDefault(e => e.Entity.Id == userIngredient.Ingredient.Id);
-            if (trackedIngredient != null)
-            {
-                trackedIngredient.State = EntityState.Detached;
-            }
-        }
-
-        _context.UserIngredients.Add(userIngredient);
-        await _context.SaveChangesAsync();
-        return userIngredient;
     }
 
     public async Task<bool> DeleteUserIngredientAsync(int userId, int ingredientId)
     {
+        Debug.WriteLine($"DeleteUserIngredientAsync: Starting with User={userId}, Ingredient={ingredientId}");
+        
         var userIngredient = await GetUserIngredientAsync(userId, ingredientId);
+        Debug.WriteLine($"DeleteUserIngredientAsync: userIngredient found? {userIngredient != null}");
+        
         if (userIngredient == null)
         {
+            Debug.WriteLine($"DeleteUserIngredientAsync: Nothing to delete, returning");
             return false;
         }
 
@@ -142,10 +155,13 @@ public class UserIngredientService : IUserIngredientService
         }
 
         _context.UserIngredients.Remove(userIngredient);
+        Debug.WriteLine($"DeleteUserIngredientAsync: Removing from context");
+        
         await _context.SaveChangesAsync();
+        Debug.WriteLine($"DeleteUserIngredientAsync: Changes saved to database");
 
-        // Detach the deleted entity to ensure the context is not tracking it anymore
-        _context.Entry(userIngredient).State = EntityState.Detached;
+        // Add this line to see the entity state
+        Debug.WriteLine($"DeleteUserIngredientAsync: Entity state after deletion: {_context.Entry(userIngredient).State}");
 
         return true;
     }

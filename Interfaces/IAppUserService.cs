@@ -12,4 +12,9 @@ public interface IAppUserService
     Task<AppUser> SaveUserAsync(AppUser appUser);
     Task<bool> DeleteUserByIdAsync(int id);
     Task<bool> DeleteUserByUsernameAsync(string name);
+    Task<AppUser> GetCurrentUserAsync();
+    AppUser GetCurrentUser();
+    void SetCurrentUser(AppUser user);
+    bool IsAuthenticated();
+    void SignOut();
 }
