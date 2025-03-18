@@ -13,7 +13,7 @@ public partial class AppShell : Shell
     public AppShell(IConfiguration config)
     {
         InitializeComponent();
-        _developerModeEnabled = config.GetValue<bool>("DeveloperMode", true);
+        _developerModeEnabled = config.GetValue<bool>("DeveloperMode", false);
 
         // Register routes.
         Routing.RegisterRoute(nameof(SignInPage), typeof(SignInPage));
@@ -32,7 +32,7 @@ public partial class AppShell : Shell
         await Task.Delay(100); // Ensures Shell is fully loaded before navigation
 
 
-        if (!_developerModeEnabled && !Preferences.Get("IsLoggedIn", false))
+        if (_developerModeEnabled)
         {
             // Resolve the SignInPage from the DI container.
             var signInPage = App.Container.GetRequiredService<SignInPage>();
