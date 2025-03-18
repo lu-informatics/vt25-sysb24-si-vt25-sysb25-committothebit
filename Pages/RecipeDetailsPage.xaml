@@ -6,13 +6,13 @@
              Title="Recipe Details"
              BackgroundColor="White">
     <ScrollView>
-        <VerticalStackLayout Spacing="15" Padding="20">
+        <VerticalStackLayout Spacing="15" Padding="10">
             <!-- Recipe Name -->
             <Label Text="{Binding Recipe.Name, Mode=TwoWay}"
                    FontAttributes="Bold"
                    FontSize="48"
                    TextColor="Black"
-                   Margin="0,0,0,10"/>
+                   Margin="20,0,20,10"/>
             
             <!-- Vertical Layout for Description and Details -->
             <VerticalStackLayout Spacing="40">
@@ -23,10 +23,11 @@
                        TextColor="Black"
                        HorizontalOptions="Fill"
                        VerticalOptions="Start"
-                       LineBreakMode="WordWrap"/>
+                       LineBreakMode="WordWrap"
+                       Margin="20,0,20,0"/>
                 
                 <!-- Grid for Difficulty, Cooking Time, and Servings -->
-                <Grid ColumnDefinitions="*,*,*" HorizontalOptions="Fill">
+                <Grid ColumnDefinitions="*,*,*" HorizontalOptions="Fill" Margin="0,0,0,20">
                     <!-- Difficulty -->
                     <VerticalStackLayout Spacing="5" HorizontalOptions="Center" Grid.Column="0">
                         <Image Source="hat_chef.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center"/>
@@ -57,101 +58,132 @@
             </VerticalStackLayout>
 
             <!-- Grid for Ingredients and Cooking Instructions -->
-            <Grid ColumnDefinitions="*,*">
+            <Grid ColumnDefinitions="*,2*">
                 <!-- Ingredient List (Read-Only) -->
-                <VerticalStackLayout Spacing="15" Padding="10" Grid.Column="0">
-                    <Label Text="Ingredients"
-                           FontAttributes="Bold"
-                           FontSize="24"
-                           TextColor="Black"/>
-                    <CollectionView ItemsSource="{Binding RecipeIngredients}"
-                                    SelectionMode="None"
-                                    VerticalOptions="Fill"
-                                    ItemsUpdatingScrollMode="KeepItemsInView">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Stroke="#E0E0E0" StrokeThickness="1" Padding="10" Margin="5">
-                                    <Grid ColumnDefinitions="30,*,Auto">
-                                        <!-- Fixed width column for checkmark -->
-                                        <Image Grid.Column="0"
-                                            Source="checkmark.png"
-                                            WidthRequest="20" 
-                                            HeightRequest="20"
-                                            HorizontalOptions="Start"
-                                            IsVisible="{Binding IsAvailable}"/>
-                                        
-                                        <!-- Ingredient Name in fixed position -->
-                                        <Label Grid.Column="1"
-                                            Text="{Binding Ingredient.Name}"
-                                            FontAttributes="Bold"
-                                            FontSize="16"
-                                            TextColor="Black"
-                                            HorizontalOptions="Start"/>
-                                        
-                                        <!-- Amount at the end -->
-                                        <Label Grid.Column="2"
-                                            HorizontalOptions="End">
-                                            <Label.Text>
-                                                <MultiBinding StringFormat="{}{0} {1}">
-                                                    <Binding Path="Amount" />
-                                                    <Binding Path="Ingredient.Unit" />
-                                                </MultiBinding>
-                                            </Label.Text>
-                                        </Label>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
+                <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
+                    <VerticalStackLayout Spacing="15" Padding="20">
+                        <Label Text="Ingredients"
+                            FontAttributes="Bold"
+                            FontSize="24"
+                            TextColor="Black"/>
+                        <CollectionView ItemsSource="{Binding RecipeIngredients}"
+                                        SelectionMode="None"
+                                        VerticalOptions="Fill"
+                                        ItemsUpdatingScrollMode="KeepItemsInView">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Stroke="#E0E0E0" StrokeThickness="0" Margin="10">
+                                        <Grid ColumnDefinitions="2*,*,*">                                        
+                                            <!-- Ingredient Name in fixed position -->
+                                            <Label Grid.Column="0"
+                                                Text="{Binding Ingredient.Name}"
+                                                FontAttributes="Bold"
+                                                FontSize="18"
+                                                TextColor="Black"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center"/>
+                                            
+                                            <!-- Amount at the end -->
+                                            <Label Grid.Column="1"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center"
+                                                FontSize="18">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} {1}">
+                                                        <Binding Path="Amount" />
+                                                        <Binding Path="Ingredient.Unit" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
 
-                        <!-- Empty View -->
-                        <CollectionView.EmptyView>
-                            <Label Text="No ingredients found in this recipe."
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                FontSize="14"
-                                FontAttributes="Italic"
-                                TextColor="Gray"/>
-                        </CollectionView.EmptyView>
-                    </CollectionView>
-                </VerticalStackLayout>
+                                            <!-- Fixed width column for checkmark -->
+                                            <Image Grid.Column="2"
+                                                Source="checkmark.png"
+                                                WidthRequest="25" 
+                                                HeightRequest="25"
+                                                HorizontalOptions="End"
+                                                VerticalOptions="Center"
+                                                IsVisible="{Binding IsAvailable}"/>
+
+                                            <!-- Bottom Border -->
+                                            <BoxView Grid.Row="2" Grid.ColumnSpan="5"
+                                                HeightRequest="1"
+                                                BackgroundColor="#cccccc"
+                                                VerticalOptions="End"
+                                                Margin="0,20,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+
+                            <!-- Empty View -->
+                            <CollectionView.EmptyView>
+                                <Label Text="No ingredients found in this recipe."
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    FontSize="14"
+                                    FontAttributes="Italic"
+                                    TextColor="Gray"/>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
 
                 <!-- Cooking Instructions -->
-                <VerticalStackLayout Spacing="15" Padding="10" Grid.Column="1">
-                    <Label Text="Cooking Instructions"
-                           FontAttributes="Bold"
-                           FontSize="24"
-                           TextColor="Black"/>
-                    <CollectionView ItemsSource="{Binding Recipe.ParsedData.steps}"
-                                  SelectionMode="None">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <StackLayout>
-                                    <Label Text="{Binding ., StringFormat='{0}. {1}'}"
-                                           FontSize="16"
-                                           TextColor="Black"/>
-                                </StackLayout>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                        <CollectionView.EmptyView>
-                            <VerticalStackLayout>
-                                <Label Text="No cooking instructions available."
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       FontSize="14"
-                                       FontAttributes="Italic"
-                                       TextColor="Gray"/>
-                                <Label Text="{Binding Recipe.Data}"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       FontSize="12"
-                                       TextColor="Gray"/>
-                            </VerticalStackLayout>
-                        </CollectionView.EmptyView>
-                    </CollectionView>
-                </VerticalStackLayout>
+                <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
+                    <VerticalStackLayout Spacing="20" Padding="20" Grid.Column="1" Margin="20,0,0,0">
+                        <Label Text="Cooking Instructions"
+                            FontAttributes="Bold"
+                            FontSize="24"
+                            TextColor="Black"/>
+                        <CollectionView ItemsSource="{Binding NumberedSteps}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="Fill">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Vertical" ItemSpacing="20"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- Single Grid with Correct Column Layout -->
+                                    <Grid ColumnDefinitions="Auto, *">
+                                        <!-- Step Number -->
+                                        <Label Text="{Binding StepNumber}"
+                                            FontSize="18"
+                                            TextColor="Black"
+                                            VerticalTextAlignment="Start"
+                                            Padding="5,0"
+                                            Margin="0,0,5,0"/>
+
+                                        <!-- Step Description -->
+                                        <Label Text="{Binding StepText}"
+                                            FontSize="18"
+                                            TextColor="Black"
+                                            Grid.Column="1"
+                                            VerticalTextAlignment="Start"
+                                            LineBreakMode="WordWrap"
+                                            HorizontalOptions="Fill"
+                                            MaxLines="10"/> <!-- Optional: Limits excessive long steps -->
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout>
+                                    <Label Text="No cooking instructions available."
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FontSize="24"
+                                        FontAttributes="Italic"
+                                        TextColor="Gray"/>
+                                    <Label Text="{Binding Recipe.Data}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FontSize="12"
+                                        TextColor="Gray"/>
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Frame>
             </Grid>
         </VerticalStackLayout>
     </ScrollView>
