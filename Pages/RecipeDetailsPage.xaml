@@ -60,7 +60,7 @@
             <!-- Grid for Ingredients and Cooking Instructions -->
             <Grid ColumnDefinitions="*,2*">
                 <!-- Ingredient List (Read-Only) -->
-                <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="0,0,10,0">
+                <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
                     <VerticalStackLayout Spacing="15" Padding="20">
                         <Label Text="Ingredients"
                             FontAttributes="Bold"
@@ -130,24 +130,40 @@
                 </Frame>
 
                 <!-- Cooking Instructions -->
-                <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent">
-                    <VerticalStackLayout Spacing="20" Padding="20" Grid.Column="1" Margin="50,0,0,0">
+                <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
+                    <VerticalStackLayout Spacing="20" Padding="20" Grid.Column="1" Margin="20,0,0,0">
                         <Label Text="Cooking Instructions"
                             FontAttributes="Bold"
                             FontSize="24"
                             TextColor="Black"/>
-                        <CollectionView ItemsSource="{Binding Recipe.ParsedData.steps}"
-                                    SelectionMode="None">
+                        <CollectionView ItemsSource="{Binding NumberedSteps}"
+                                        SelectionMode="None"
+                                        HorizontalOptions="Fill">
                             <CollectionView.ItemsLayout>
                                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="20"/>
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackLayout>
-                                        <Label Text="{Binding ., StringFormat='{0}. {1}'}"
+                                    <!-- Single Grid with Correct Column Layout -->
+                                    <Grid ColumnDefinitions="Auto, *">
+                                        <!-- Step Number -->
+                                        <Label Text="{Binding StepNumber}"
                                             FontSize="18"
-                                            TextColor="Black"/>
-                                    </StackLayout>
+                                            TextColor="Black"
+                                            VerticalTextAlignment="Start"
+                                            Padding="5,0"
+                                            Margin="0,0,5,0"/>
+
+                                        <!-- Step Description -->
+                                        <Label Text="{Binding StepText}"
+                                            FontSize="18"
+                                            TextColor="Black"
+                                            Grid.Column="1"
+                                            VerticalTextAlignment="Start"
+                                            LineBreakMode="WordWrap"
+                                            HorizontalOptions="Fill"
+                                            MaxLines="10"/> <!-- Optional: Limits excessive long steps -->
+                                    </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                             <CollectionView.EmptyView>
