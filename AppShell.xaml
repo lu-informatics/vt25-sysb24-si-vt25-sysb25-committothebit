@@ -4,15 +4,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Informatics.Appetite"
-    Shell.FlyoutBehavior="Disabled"
     Title="Informatics.Appetite"
-    Shell.TabBarIsVisible="True">
-    <TabBar>
-        <ShellSection Title="Recipes">
-            <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />
-        </ShellSection>
-        <ShellSection Title="My Ingredients">
-            <ShellContent ContentTemplate="{DataTemplate local:Pages.IngredientsPage}" />
-        </ShellSection>
-    </TabBar>
+    Shell.FlyoutBehavior="Locked"
+    Shell.FlyoutWidth="200"
+    Shell.FlyoutBackgroundColor="#e3e3e3">
+
+    <FlyoutItem Title="Recipes" Icon="recipe_logo.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="My Ingredients" Icon="my_ingredients.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.IngredientsPage}" />
+    </FlyoutItem>
+
 </Shell>

@@ -42,14 +42,11 @@ public partial class RecipeDetailsViewModel : BaseViewModel
             IsBusy = true;
             if (recipeId == -1)
             {
-                // If recipeId is -1, create a new recipe
                 Recipe = new Recipe();
             }
             else
             {
-                // Otherwise, load existing recipe
                 Recipe = await _recipeService.GetRecipeByIdAsync(recipeId) ?? new Recipe();
-                // Load associated ingredients
                 var recipeIngredients = await _recipeIngredientService.GetRecipeIngredientsByRecipeIdAsync(recipeId);
 
                 try
@@ -70,6 +67,9 @@ public partial class RecipeDetailsViewModel : BaseViewModel
                     Console.WriteLine($"Error loading user ingredients: {ex.Message}");
                     // Handle the error appropriately
                 }
+
+                // Notify UI that NumberedSteps has changed
+                OnPropertyChanged(nameof(NumberedSteps));
             }
         }
         catch (Exception ex)
@@ -79,6 +79,22 @@ public partial class RecipeDetailsViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    public ObservableCollection<NumberedStep> NumberedSteps
+    {
+        get
+        {
+            if (Recipe?.ParsedData?.steps == null)
+                return new ObservableCollection<NumberedStep>();
+
+            return new ObservableCollection<NumberedStep>(
+                Recipe.ParsedData.steps.Select((step, index) => new NumberedStep
+                {
+                    StepNumber = $"{index + 1}.",  // Keep only the number
+                    StepText = step               // The actual step text
+                }));
         }
     }
 
