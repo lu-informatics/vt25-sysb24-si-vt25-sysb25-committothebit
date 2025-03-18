@@ -6,6 +6,13 @@
              Title="Sign In">
 
     <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+        
+        <!-- App Logo -->
+        <Image Source="bonappetitee.png"
+               HeightRequest="450"
+               HorizontalOptions="Center"
+               Margin="0,0,0,100"
+               AutomationId="AppLogo"/>
 
         <!-- Username Entry -->
         <Entry x:Name="UsernameEntry"
