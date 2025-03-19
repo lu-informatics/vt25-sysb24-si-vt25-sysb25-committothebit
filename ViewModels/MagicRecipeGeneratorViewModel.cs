@@ -13,11 +13,13 @@ namespace Informatics.Appetite.ViewModels
         private string _recipeText;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
         private readonly IUserIngredientService _userIngredientService;
+        private readonly IAppUserService _appUserService;
 
-        public MagicRecipeGeneratorViewModel(IMagicRecipeGeneratorService magicRecipeGeneratorService, IUserIngredientService userIngredientService)
+        public MagicRecipeGeneratorViewModel(IMagicRecipeGeneratorService magicRecipeGeneratorService, IUserIngredientService userIngredientService, IAppUserService appUserService)
         {
             _magicRecipeGeneratorService = magicRecipeGeneratorService;
             _userIngredientService = userIngredientService;
+            _appUserService = appUserService;
             GenerateRecipeCommand = new Command(async () => await GenerateRecipeAsync());
         }
 
@@ -38,7 +40,10 @@ namespace Informatics.Appetite.ViewModels
             var animationTask = AnimateRecipeTextAsync();
 
             // Fetch user ingredients
-            IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsAsync();
+            AppUser appUser = await _appUserService.GetCurrentUserAsync();
+            var appUserId = appUser.Id;
+
+            IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
 
             //Convert user ingredients to a string
             string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
