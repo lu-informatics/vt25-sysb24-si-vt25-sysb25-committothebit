@@ -33,6 +33,7 @@ namespace Informatics.Appetite.ViewModels
         private async Task GenerateRecipeAsync()
         {
             RecipeText = "Generating recipe...";
+            await Task.Delay(1000); // Simulate a delay
             RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync();
         }
     }
