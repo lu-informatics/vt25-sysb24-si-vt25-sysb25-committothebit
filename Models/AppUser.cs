@@ -29,9 +29,9 @@ public class AppUser
 
     public ICollection<UserIngredient> UserIngredients { get; set; } = new List<UserIngredient>();
 
-    public static readonly int SaltSize = 32;
-    public static readonly int HashSize = 32; 
-    public static readonly int Iterations = 100000; 
+    private const int SaltSize = 32;
+    private const int HashSize = 32;
+    private const int Iterations = 100000;
 
     public void SetPassword(string password)
     {
