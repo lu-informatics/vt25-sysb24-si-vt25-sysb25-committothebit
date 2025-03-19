@@ -32,9 +32,25 @@ namespace Informatics.Appetite.ViewModels
 
         private async Task GenerateRecipeAsync()
         {
-            RecipeText = "Generating recipe...";
-            await Task.Delay(1000); // Simulate a delay
+            var animationTask = AnimateRecipeTextAsync();
             RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync();
+            _isAnimating = false; // Stop the animation
+        }
+
+        private bool _isAnimating;
+
+        private async Task AnimateRecipeTextAsync()
+        {
+            _isAnimating = true;
+            string baseText = "Generating recipe ";
+            int dotCount = 0;
+
+            while (_isAnimating)
+            {
+                dotCount = (dotCount % 3) + 1;
+                RecipeText = baseText + new string('.', dotCount);
+                await Task.Delay(500); // Adjust the delay as needed
+            }
         }
     }
 }

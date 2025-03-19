@@ -21,7 +21,7 @@ public class MagicRecipeGeneratorService : IMagicRecipeGeneratorService
 
     public async Task<string> GenerateRecipeAsync()
     {
-        string prompt = "Hello, is there anybody out there?";
+        string prompt = "Generate a short random recipe.";
         ChatCompletion completion = await _chatClient.CompleteChatAsync(prompt);
         string response = completion.Content[0].Text;
         return response;
