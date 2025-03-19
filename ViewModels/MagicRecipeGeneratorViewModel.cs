@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Informatics.Appetite.Services;
 using Informatics.Appetite.Interfaces;
+using Informatics.Appetite.Models;
 
 namespace Informatics.Appetite.ViewModels
 {
@@ -11,10 +12,12 @@ namespace Informatics.Appetite.ViewModels
     {
         private string _recipeText;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
+        private readonly IUserIngredientService _userIngredientService;
 
-        public MagicRecipeGeneratorViewModel(IMagicRecipeGeneratorService magicRecipeGeneratorService)
+        public MagicRecipeGeneratorViewModel(IMagicRecipeGeneratorService magicRecipeGeneratorService, IUserIngredientService userIngredientService)
         {
             _magicRecipeGeneratorService = magicRecipeGeneratorService;
+            _userIngredientService = userIngredientService;
             GenerateRecipeCommand = new Command(async () => await GenerateRecipeAsync());
         }
 
@@ -33,8 +36,18 @@ namespace Informatics.Appetite.ViewModels
         private async Task GenerateRecipeAsync()
         {
             var animationTask = AnimateRecipeTextAsync();
-            RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync();
-            _isAnimating = false; // Stop the animation
+
+            // Fetch user ingredients
+            IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsAsync();
+
+            //Convert user ingredients to a string
+            string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
+
+            // Call the MagicRecipeGeneratorService to generate a recipe
+            RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
+
+            // Stop the animation
+            _isAnimating = false;
         }
 
         private bool _isAnimating;

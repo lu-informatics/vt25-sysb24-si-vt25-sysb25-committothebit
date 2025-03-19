@@ -19,9 +19,9 @@ public class MagicRecipeGeneratorService : IMagicRecipeGeneratorService
         _chatClient = new ChatClient("gpt-4o-mini", _openAiKey);
     }
 
-    public async Task<string> GenerateRecipeAsync()
+    public async Task<string> GenerateRecipeAsync(string ingredientsList)
     {
-        string prompt = "Generate a short random recipe.";
+        string prompt = $"Generate a short recipe based on the following ingredients. Also, print out the ingredients list exactly as it appeared to you in the prompt. Ingredients: {ingredientsList}";
         ChatCompletion completion = await _chatClient.CompleteChatAsync(prompt);
         string response = completion.Content[0].Text;
         return response;
