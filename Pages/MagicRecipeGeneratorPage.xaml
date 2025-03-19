@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Informatics.Appetite.ViewModels"
              x:Class="Informatics.Appetite.Pages.MagicRecipeGeneratorPage"
-             Title="Magic Recipe Generator">
+             x:DataType="vm:MagicRecipeGeneratorViewModel">
     <VerticalStackLayout Padding="20" Spacing="20">
         <Label 
             Text="Click the button below to generate a random recipe!"
@@ -10,14 +11,13 @@
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
         <Label 
-            x:Name="RecipeLabel"
-            Text="Prepare the base: Heat olive oil in a large pan over medium heat. Add chopped onion, garlic, carrot, and celery. Sauté for about 5 minutes until softened. Brown the meat: Add ground beef and cook until browned, breaking it apart with a spoon. Drain excess fat if necessary. Build the sauce: Stir in tomato paste, crushed tomatoes, and beef broth (or wine). Add oregano, basil, bay leaf, sugar, salt, and pepper. Simmer: Reduce heat to low, cover, and let the sauce simmer for at least 30 minutes, stirring occasionally. The longer it simmers, the better the flavor."
+            Text="{Binding RecipeText}"
             FontSize="18"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
         <Button
             Text="Generate Recipe"
-            Clicked="GenerateRecipeButton_Clicked"
+            Command="{Binding GenerateRecipeCommand}"
             VerticalOptions="Center"
             HorizontalOptions="Center" />
     </VerticalStackLayout>

@@ -59,6 +59,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IngredientsViewModel>();
         builder.Services.AddSingleton<RecipesViewModel>();
         builder.Services.AddSingleton<SignInViewModel>();
+        builder.Services.AddSingleton<MagicRecipeGeneratorViewModel>();
 
         // Register ViewModels with transient lifetimes.
         builder.Services.AddTransient<IngredientDetailsViewModel>();
@@ -71,6 +72,7 @@ public static class MauiProgram
         builder.Services.AddTransient<IngredientDetailsPage>();
         builder.Services.AddSingleton<RecipesPage>();
         builder.Services.AddTransient<RecipeDetailsPage>();
+        builder.Services.AddSingleton<MagicRecipeGeneratorPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

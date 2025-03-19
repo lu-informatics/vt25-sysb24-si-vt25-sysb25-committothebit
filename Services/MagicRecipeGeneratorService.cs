@@ -18,6 +18,6 @@ public class MagicRecipeGeneratorService : IMagicRecipeGeneratorService
     public async Task<string> GenerateRecipeAsync()
     {
         // This is where the magic happens
-        return "Magic Recipe";
+        return "If you can see this text, it means the code has gotten as far as the GenerateRecipesAsync method in the MagicRecipeGeneratorService class.";
     }
 }
