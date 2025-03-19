@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:Informatics.Appetite"
     Title="Informatics.Appetite"
     Shell.FlyoutBehavior="Locked"
-    Shell.FlyoutWidth="200"
+    Shell.FlyoutWidth="300"
     Shell.FlyoutBackgroundColor="#e3e3e3">
 
     <FlyoutItem Title="Recipes" Icon="recipe_logo.png">
@@ -21,4 +21,13 @@
         <ShellContent ContentTemplate="{DataTemplate local:Pages.MagicRecipeGeneratorPage}" />
     </FlyoutItem>
 
+    <Shell.FlyoutFooter>
+        <StackLayout Padding="10" BackgroundColor="Transparent">
+            <Label x:Name="CurrentUserLabel"
+                   Text="Signed in : "
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </StackLayout>
+    </Shell.FlyoutFooter>
+    
 </Shell>
