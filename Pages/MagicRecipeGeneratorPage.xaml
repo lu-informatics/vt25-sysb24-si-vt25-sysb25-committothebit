@@ -84,8 +84,9 @@
                 <Grid ColumnDefinitions="*,2*">
                     <!-- Ingredient List (Read-Only) -->
                     <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
-                        <VerticalStackLayout Spacing="15" Padding="20">
+                        <VerticalStackLayout Spacing="30" Padding="20">
                             <Label Text="Ingredients"
+                                HorizontalOptions="Center"
                                 FontAttributes="Bold"
                                 FontSize="24"
                                 TextColor="Black"/>
@@ -96,35 +97,22 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Border Stroke="#E0E0E0" StrokeThickness="0" Margin="10">
-                                            <Grid ColumnDefinitions="2*,*,*">                                        
+                                            <Grid ColumnDefinitions="2*,*">                                        
                                                 <!-- Ingredient Name in fixed position -->
                                                 <Label Grid.Column="0"
-                                                    Text="{Binding Ingredient.Name}"
+                                                    Text="{Binding}"
                                                     FontAttributes="Bold"
                                                     FontSize="18"
                                                     TextColor="Black"
                                                     HorizontalOptions="Start"
                                                     VerticalOptions="Center"/>
-                                                
-                                                <!-- Amount at the end -->
-                                                <Label Grid.Column="1"
-                                                    HorizontalOptions="Start"
-                                                    VerticalOptions="Center"
-                                                    FontSize="18">
-                                                    <Label.Text>
-                                                        <MultiBinding StringFormat="{}{0} {1}">
-                                                            <Binding Path="Amount" />
-                                                            <Binding Path="Ingredient.Unit" />
-                                                        </MultiBinding>
-                                                    </Label.Text>
-                                                </Label>
 
                                                 <!-- Fixed width column for checkmark -->
                                                 <Image Grid.Column="2"
                                                     Source="checkmark.png"
                                                     WidthRequest="25" 
                                                     HeightRequest="25"
-                                                    HorizontalOptions="End"
+                                                    HorizontalOptions="Center"
                                                     VerticalOptions="Center"
                                                     IsVisible="{Binding IsAvailable}"/>
 
@@ -154,8 +142,9 @@
 
                     <!-- Cooking Instructions -->
                     <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
-                        <VerticalStackLayout Spacing="20" Padding="20" Grid.Column="1" Margin="20,0,0,0">
+                        <VerticalStackLayout Spacing="30" Padding="20" Grid.Column="1" Margin="20,0,0,0">
                             <Label Text="Cooking Instructions"
+                                HorizontalOptions="Center"
                                 FontAttributes="Bold"
                                 FontSize="24"
                                 TextColor="Black"/>
@@ -191,12 +180,12 @@
                                 </CollectionView.ItemTemplate>
                                 <CollectionView.EmptyView>
                                     <VerticalStackLayout>
-                                        <Label Text="No cooking instructions available."
+                                            <Label Text="No cooking instructions available."
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center"
                                             FontSize="24"
-                                            FontAttributes="Italic"
-                                            TextColor="Gray"/>
+                                                FontAttributes="Italic"
+                                                TextColor="Gray"/>
                                         <Label Text="{Binding Recipe.Data}"
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center"
