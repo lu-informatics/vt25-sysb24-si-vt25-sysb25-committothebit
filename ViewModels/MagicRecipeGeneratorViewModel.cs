@@ -6,6 +6,7 @@ using Informatics.Appetite.Services;
 using Informatics.Appetite.Interfaces;
 using Informatics.Appetite.Models;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace Informatics.Appetite.ViewModels
 {
@@ -17,6 +18,8 @@ namespace Informatics.Appetite.ViewModels
         private string _recipeDifficultyLevel;
         private int _recipeCookingTime;
         private int _recipeServings;
+        private string _recipeIngredients;
+        private string _numberedSteps;
 
         private Recipe _recipe;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
@@ -101,6 +104,26 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
+        public string RecipeIngredients
+        {
+            get => _recipeIngredients;
+            set
+            {
+                _recipeIngredients = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string NumberedSteps
+        {
+            get => _numberedSteps;
+            set
+            {
+                _numberedSteps = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand GenerateRecipeCommand { get; }
 
         private async Task GenerateRecipeAsync()
@@ -119,15 +142,21 @@ namespace Informatics.Appetite.ViewModels
             // Call the MagicRecipeGeneratorService to generate a recipe
             RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
 
+            Debug.WriteLine($"Hello");
+            Debug.WriteLine(RecipeText);
+
             // Parse API response to Recipe object
             Recipe recipe = ParseRecipe(RecipeText);
 
             // Populate UI elements with recipe data
             RecipeName = recipe.Name;
-            RecipeDescription = recipe.ParsedData.description;
+            RecipeDescription = recipe.ParsedData?.description;
             RecipeDifficultyLevel = recipe.DifficultyLevel;
             RecipeCookingTime = recipe.CookingTime;
             RecipeServings = recipe.Servings;
+            RecipeIngredients = "Testing...";
+            NumberedSteps = "Testing...";
+            
 
 
             // Stop the animation
@@ -160,12 +189,20 @@ namespace Informatics.Appetite.ViewModels
                     PropertyNameCaseInsensitive = true
                 };
 
-                var recipeData = JsonSerializer.Deserialize<RecipeData>(apiResponse, options);
                 var recipe = JsonSerializer.Deserialize<Recipe>(apiResponse, options);
 
-                if (recipe != null && recipeData != null)
+                if (recipe != null)
                 {
-                    recipe.Data = recipeData.ToJson();
+                    Debug.WriteLine($"Recipe Name: {recipe.Name}");
+                    Debug.WriteLine($"Recipe Data: {recipe.Data}");
+                    Debug.WriteLine($"Recipe Difficulty Level: {recipe.DifficultyLevel}");
+                    Debug.WriteLine($"Recipe Cooking Time: {recipe.CookingTime}");
+                    Debug.WriteLine($"Recipe Servings: {recipe.Servings}");
+                    Debug.WriteLine($"Recipe Description: {recipe.ParsedData?.description}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Parsed recipe is null.");
                 }
 
                 return recipe ?? new Recipe();
