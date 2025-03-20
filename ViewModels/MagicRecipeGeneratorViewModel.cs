@@ -14,7 +14,8 @@ namespace Informatics.Appetite.ViewModels
 {
     public class MagicRecipeGeneratorViewModel : BindableObject
     {
-        private string _recipeText;
+        private string _apiResponse;
+        private string _generatingAnimation;
         private string _recipeName;
         private string _recipeDescription;
         private string _recipeDifficultyLevel;
@@ -45,16 +46,26 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
-        public string RecipeText
+        public string GeneratingAnimation
         {
-            get => _recipeText;
+            get => _generatingAnimation;
             set
             {
-                _recipeText = value;
+                _generatingAnimation = value;
                 OnPropertyChanged();
             }
         }
 
+        public string ApiResponse
+        {
+            get => _apiResponse;
+            set
+            {
+                _apiResponse = value;
+                OnPropertyChanged();
+            }
+        }
+        
         public string RecipeName
         {
             get => _recipeName;
@@ -133,13 +144,13 @@ namespace Informatics.Appetite.ViewModels
             string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
 
             // Call the MagicRecipeGeneratorService to generate a recipe
-            RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
+            ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
 
             Debug.WriteLine($"Hello");
-            Debug.WriteLine(RecipeText);
+            Debug.WriteLine(ApiResponse);
 
             // Parse API response to Recipe object
-            Recipe recipe = ParseRecipe(RecipeText);
+            Recipe recipe = ParseRecipe(ApiResponse);
 
             // Populate UI elements with recipe data
             RecipeName = recipe.Name;
@@ -186,7 +197,7 @@ namespace Informatics.Appetite.ViewModels
             while (_isAnimating)
             {
                 dotCount = (dotCount % 3) + 1;
-                RecipeText = baseText + new string('.', dotCount);
+                GeneratingAnimation = baseText + new string('.', dotCount);
                 await Task.Delay(500); // Adjust the delay as needed
             }
         }

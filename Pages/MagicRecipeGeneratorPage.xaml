@@ -13,7 +13,7 @@
             HorizontalOptions="Center" 
             Grid.Row="0" />
         <Label 
-            Text="{Binding RecipeText}"
+            Text="{Binding GeneratingAnimation}"
             FontSize="18"
             VerticalOptions="Center" 
             HorizontalOptions="Start" 
