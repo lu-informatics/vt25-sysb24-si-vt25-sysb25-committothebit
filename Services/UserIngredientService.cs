@@ -70,46 +70,45 @@ public class UserIngredientService : IUserIngredientService
     public async Task<UserIngredient> SaveUserIngredientAsync(UserIngredient userIngredient)
     {
         Debug.WriteLine($"SaveUserIngredientAsync: Starting with User={userIngredient.AppUserId}, Ingredient={userIngredient.IngredientId}");
-        
-        var existingUserIngredient = await GetUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
-        Debug.WriteLine($"SaveUserIngredientAsync: existingUserIngredient found? {existingUserIngredient != null}");
-        
         try
         {
-            if (existingUserIngredient != null)
+            // First, check if an entity with the same key is already tracked locally.
+            var localEntity = _context.UserIngredients.Local
+                .FirstOrDefault(ui => ui.AppUserId == userIngredient.AppUserId && ui.IngredientId == userIngredient.IngredientId);
+
+            if (localEntity != null)
             {
-                // Update existing ingredient
-                Debug.WriteLine($"SaveUserIngredientAsync: Updating existing entry, old amount: {existingUserIngredient.Amount}, new amount: {userIngredient.Amount}");
-                
-                // Detach the current entity from tracking
-                _context.Entry(existingUserIngredient).State = EntityState.Detached;
-                
-                // Update properties on the entity we're saving
-                _context.UserIngredients.Attach(userIngredient);
-                _context.Entry(userIngredient).State = EntityState.Modified;
+                Debug.WriteLine($"SaveUserIngredientAsync: Updating tracked entity, old amount: {localEntity.Amount}, new amount: {userIngredient.Amount}");
+                // Update the tracked entity directly.
+                localEntity.Amount = userIngredient.Amount;
+                // Use the tracked entity for saving.
+                userIngredient = localEntity;
             }
             else
             {
-                // Adding new ingredient
-                Debug.WriteLine($"SaveUserIngredientAsync: Adding new entry");
-                
-                // Check if the entity is being tracked already
-                var trackedEntity = _context.UserIngredients.Local.FirstOrDefault(
-                    e => e.AppUserId == userIngredient.AppUserId && e.IngredientId == userIngredient.IngredientId);
-                
-                if (trackedEntity != null)
+                // Entity is not tracked locally; check if it exists in the database.
+                var existingUserIngredient = await _context.UserIngredients
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(ui => ui.AppUserId == userIngredient.AppUserId && ui.IngredientId == userIngredient.IngredientId);
+
+                if (existingUserIngredient != null)
                 {
-                    Debug.WriteLine($"SaveUserIngredientAsync: Found tracked entity, detaching it");
-                    _context.Entry(trackedEntity).State = EntityState.Detached;
+                    Debug.WriteLine($"SaveUserIngredientAsync: Existing entry found in DB. Attaching and marking as modified.");
+                    // Attach the new instance and mark it as modified.
+                    _context.UserIngredients.Attach(userIngredient);
+                    _context.Entry(userIngredient).State = EntityState.Modified;
                 }
-                
-                _context.UserIngredients.Add(userIngredient);
+                else
+                {
+                    Debug.WriteLine($"SaveUserIngredientAsync: No existing entry found. Adding new entry.");
+                    _context.UserIngredients.Add(userIngredient);
+                }
             }
-            
+
             await _context.SaveChangesAsync();
             Debug.WriteLine($"SaveUserIngredientAsync: Changes saved to database");
 
-            // Get fresh copy from database to ensure all related entities are loaded
+            // Return a fresh copy from the database (if needed).
             return await GetUserIngredientAsync(userIngredient.AppUserId, userIngredient.IngredientId);
         }
         catch (Exception ex)
@@ -119,50 +118,45 @@ public class UserIngredientService : IUserIngredientService
         }
     }
 
+
     public async Task<bool> DeleteUserIngredientAsync(int userId, int ingredientId)
     {
         Debug.WriteLine($"DeleteUserIngredientAsync: Starting with User={userId}, Ingredient={ingredientId}");
-        
-        var userIngredient = await GetUserIngredientAsync(userId, ingredientId);
-        Debug.WriteLine($"DeleteUserIngredientAsync: userIngredient found? {userIngredient != null}");
-        
-        if (userIngredient == null)
-        {
-            Debug.WriteLine($"DeleteUserIngredientAsync: Nothing to delete, returning");
-            return false;
-        }
 
-        // Check for and detach any duplicate tracked AppUser instance.
-        if (userIngredient.AppUser != null)
+        // First, check if an entity with the same key is already tracked locally.
+        var trackedUserIngredient = _context.UserIngredients.Local
+            .FirstOrDefault(ui => ui.AppUserId == userId && ui.IngredientId == ingredientId);
+
+        UserIngredient userIngredient;
+        if (trackedUserIngredient != null)
         {
-            var trackedAppUser = _context.ChangeTracker.Entries<AppUser>()
-                .FirstOrDefault(e => e.Entity.Id == userIngredient.AppUser.Id);
-            if (trackedAppUser != null)
+            userIngredient = trackedUserIngredient;
+            Debug.WriteLine("DeleteUserIngredientAsync: Found tracked entity.");
+        }
+        else
+        {
+            // Not in local tracker, so retrieve it from the database.
+            userIngredient = await _context.UserIngredients
+                .AsNoTracking()
+                .FirstOrDefaultAsync(ui => ui.AppUserId == userId && ui.IngredientId == ingredientId);
+            if (userIngredient == null)
             {
-                trackedAppUser.State = EntityState.Detached;
+                Debug.WriteLine("DeleteUserIngredientAsync: Nothing to delete, returning false.");
+                return false;
             }
+            // Attach the untracked entity so it becomes tracked.
+            _context.UserIngredients.Attach(userIngredient);
+            Debug.WriteLine("DeleteUserIngredientAsync: Attached untracked entity.");
         }
 
-        // Check for and detach any duplicate tracked Ingredient instance.
-        if (userIngredient.Ingredient != null)
-        {
-            var trackedIngredient = _context.ChangeTracker.Entries<Ingredient>()
-                .FirstOrDefault(e => e.Entity.Id == userIngredient.Ingredient.Id);
-            if (trackedIngredient != null)
-            {
-                trackedIngredient.State = EntityState.Detached;
-            }
-        }
-
+        // Remove the entity.
         _context.UserIngredients.Remove(userIngredient);
-        Debug.WriteLine($"DeleteUserIngredientAsync: Removing from context");
-        
-        await _context.SaveChangesAsync();
-        Debug.WriteLine($"DeleteUserIngredientAsync: Changes saved to database");
+        Debug.WriteLine("DeleteUserIngredientAsync: Removing from context.");
 
-        // Add this line to see the entity state
-        Debug.WriteLine($"DeleteUserIngredientAsync: Entity state after deletion: {_context.Entry(userIngredient).State}");
+        await _context.SaveChangesAsync();
+        Debug.WriteLine("DeleteUserIngredientAsync: Changes saved to database.");
 
         return true;
     }
+
 }
