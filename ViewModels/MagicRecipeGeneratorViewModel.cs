@@ -5,12 +5,20 @@ using Microsoft.Maui.Controls;
 using Informatics.Appetite.Services;
 using Informatics.Appetite.Interfaces;
 using Informatics.Appetite.Models;
+using System.Text.Json;
 
 namespace Informatics.Appetite.ViewModels
 {
     public class MagicRecipeGeneratorViewModel : BindableObject
     {
         private string _recipeText;
+        private string _recipeName;
+        private string _recipeDescription;
+        private string _recipeDifficultyLevel;
+        private int _recipeCookingTime;
+        private int _recipeServings;
+
+        private Recipe _recipe;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
         private readonly IUserIngredientService _userIngredientService;
         private readonly IAppUserService _appUserService;
@@ -23,12 +31,72 @@ namespace Informatics.Appetite.ViewModels
             GenerateRecipeCommand = new Command(async () => await GenerateRecipeAsync());
         }
 
+        public Recipe Recipe
+        {
+            get => _recipe;
+            set
+            {
+                _recipe = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string RecipeText
         {
             get => _recipeText;
             set
             {
                 _recipeText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RecipeName
+        {
+            get => _recipeName;
+            set
+            {
+                _recipeName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RecipeDescription
+        {
+            get => _recipeDescription;
+            set
+            {
+                _recipeDescription = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RecipeDifficultyLevel
+        {
+            get => _recipeDifficultyLevel;
+            set
+            {
+                _recipeDifficultyLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int RecipeCookingTime
+        {
+            get => _recipeCookingTime;
+            set
+            {
+                _recipeCookingTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int RecipeServings
+        {
+            get => _recipeServings;
+            set
+            {
+                _recipeServings = value;
                 OnPropertyChanged();
             }
         }
@@ -51,6 +119,17 @@ namespace Informatics.Appetite.ViewModels
             // Call the MagicRecipeGeneratorService to generate a recipe
             RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
 
+            // Parse API response to Recipe object
+            Recipe recipe = ParseRecipe(RecipeText);
+
+            // Populate UI elements with recipe data
+            RecipeName = recipe.Name;
+            RecipeDescription = recipe.ParsedData.description;
+            RecipeDifficultyLevel = recipe.DifficultyLevel;
+            RecipeCookingTime = recipe.CookingTime;
+            RecipeServings = recipe.Servings;
+
+
             // Stop the animation
             _isAnimating = false;
         }
@@ -68,6 +147,33 @@ namespace Informatics.Appetite.ViewModels
                 dotCount = (dotCount % 3) + 1;
                 RecipeText = baseText + new string('.', dotCount);
                 await Task.Delay(500); // Adjust the delay as needed
+            }
+        }
+
+        // Method for parsing the API response to a Recipe object
+        public Recipe ParseRecipe(string apiResponse)
+        {
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var recipeData = JsonSerializer.Deserialize<RecipeData>(apiResponse, options);
+                var recipe = JsonSerializer.Deserialize<Recipe>(apiResponse, options);
+
+                if (recipe != null && recipeData != null)
+                {
+                    recipe.Data = recipeData.ToJson();
+                }
+
+                return recipe ?? new Recipe();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"JSON Parse Error: {ex.Message}");
+                return new Recipe();
             }
         }
     }

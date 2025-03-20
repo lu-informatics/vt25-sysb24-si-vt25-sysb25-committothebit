@@ -49,7 +49,6 @@ public static class MauiProgram
 
         // Register services.
         builder.Services.AddSingleton(openAiKey);
-        builder.Services.AddSingleton(new ChatClient("gpt-4o-mini", openAiKey));
         builder.Services.AddSingleton<IAppUserService, AppUserService>(); // Singleton for the app, since we want to store current user on there
         builder.Services.AddSingleton<IMagicRecipeGeneratorService, MagicRecipeGeneratorService>();
         builder.Services.AddScoped<IIngredientService, IngredientService>();
