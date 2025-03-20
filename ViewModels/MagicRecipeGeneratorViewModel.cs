@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -19,7 +21,6 @@ namespace Informatics.Appetite.ViewModels
         private int _recipeCookingTime;
         private int _recipeServings;
         private string _recipeIngredients;
-        private string _numberedSteps;
 
         private Recipe _recipe;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
@@ -114,15 +115,7 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
-        public string NumberedSteps
-        {
-            get => _numberedSteps;
-            set
-            {
-                _numberedSteps = value;
-                OnPropertyChanged();
-            }
-        }
+        public ObservableCollection<NumberedStep> NumberedStepsCollection { get; } = new();
 
         public ICommand GenerateRecipeCommand { get; }
 
@@ -136,7 +129,7 @@ namespace Informatics.Appetite.ViewModels
 
             IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
 
-            //Convert user ingredients to a string
+            // Convert user ingredients to a string
             string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
 
             // Call the MagicRecipeGeneratorService to generate a recipe
@@ -155,9 +148,28 @@ namespace Informatics.Appetite.ViewModels
             RecipeCookingTime = recipe.CookingTime;
             RecipeServings = recipe.Servings;
             RecipeIngredients = "Testing...";
-            NumberedSteps = "Testing...";
-            
 
+            // Prepare steps data
+            var tempSteps = new List<NumberedStep>();
+            if (recipe?.ParsedData?.steps != null)
+            {
+                tempSteps = recipe.ParsedData.steps.Select((step, index) => new NumberedStep
+                {
+                    StepNumber = $"{index + 1}.",
+                    StepText = step
+                }).ToList();
+            }
+
+            // Update the NumberedStepsCollection
+            NumberedStepsCollection.Clear();
+            foreach (var step in tempSteps)
+            {
+                NumberedStepsCollection.Add(step);
+            }
+
+            // Notify UI that data has changed
+            OnPropertyChanged(nameof(NumberedStepsCollection));
+            Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
 
             // Stop the animation
             _isAnimating = false;
