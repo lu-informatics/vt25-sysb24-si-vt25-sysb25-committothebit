@@ -5,24 +5,31 @@
              xmlns:models="clr-namespace:Informatics.Appetite.Models"
              x:Class="Informatics.Appetite.Pages.MagicRecipeGeneratorPage"
              x:DataType="vm:MagicRecipeGeneratorViewModel">
-    <Grid Padding="20" RowDefinitions="Auto, Auto, Auto, Auto, *" ColumnDefinitions="*">
+    <Grid Padding="20" RowSpacing="20" RowDefinitions="Auto, Auto, Auto, Auto, *" ColumnDefinitions="*">
         <Label 
-            Text="Click the button below to generate a random recipe!"
+            Text="No recipe to your liking? No problem!"
             FontSize="24"
             VerticalOptions="Center" 
-            HorizontalOptions="Center" 
+            HorizontalOptions="Center"
             Grid.Row="0" />
         <Label 
-            Text="{Binding GeneratingAnimation}"
+            Text="Let your machine overlords decide what you should cook. Click the button below to generate recipes tailored to the ingredients you have at home!"
             FontSize="18"
             VerticalOptions="Center" 
-            HorizontalOptions="Start" 
-            Grid.Row="1" />
+            HorizontalOptions="Center" 
+            Grid.Row="1"
+            MaximumWidthRequest="800" />
         <Button
-            Text="Generate Recipe"
+            Text="{Binding GeneratingAnimation}"
+            FontSize="18"
+            FontAttributes="Bold"
+            TextColor="White"
+            BackgroundColor="#FFDF52EF"
+            BorderWidth="0"
             Command="{Binding GenerateRecipeCommand}"
             VerticalOptions="Center"
-            HorizontalOptions="Center" 
+            HorizontalOptions="Center"
+            MinimumWidthRequest="200" 
             Grid.Row="2" />
 
         <!-- Recipe Name -->

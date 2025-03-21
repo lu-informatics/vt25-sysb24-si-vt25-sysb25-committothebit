@@ -15,7 +15,7 @@ namespace Informatics.Appetite.ViewModels
     public class MagicRecipeGeneratorViewModel : BindableObject
     {
         private string _apiResponse;
-        private string _generatingAnimation;
+        private string _generatingAnimation = "Generate a recipe";
         private string _recipeName;
         private string _recipeDescription;
         private string _recipeDifficultyLevel;
@@ -121,83 +121,91 @@ namespace Informatics.Appetite.ViewModels
 
         public ICommand GenerateRecipeCommand { get; }
 
-    private async Task GenerateRecipeAsync()
-    {
-        var animationTask = AnimateRecipeTextAsync();
-
-        // Fetch user ingredients
-        AppUser appUser = await _appUserService.GetCurrentUserAsync();
-        var appUserId = appUser.Id;
-
-        IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
-
-        // Convert user ingredients to a string
-        string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
-
-        // Call the MagicRecipeGeneratorService to generate a recipe
-        ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
-
-        Debug.WriteLine($"Hello");
-        Debug.WriteLine(ApiResponse);
-
-        // Parse API response to Recipe object
-        Recipe recipe = ParseRecipe(ApiResponse);
-
-        // Populate UI elements with recipe data
-        PopulateRecipeData(recipe);
-
-        // Parse ingredient names from the JSON response
-        var ingredientNames = ParseIngredientNames(ApiResponse);
-
-        // Set RecipeIngredients
-        RecipeIngredients.Clear();
-        foreach (var ingredient in ingredientNames)
+        private async Task GenerateRecipeAsync()
         {
-            RecipeIngredients.Add(ingredient);
-        }
-        OnPropertyChanged(nameof(RecipeIngredients));
-        Debug.WriteLine($"RecipeIngredients: {RecipeIngredients.Count}");
+            GeneratingAnimation = "Thinking";
+            OnPropertyChanged(nameof(GeneratingAnimation));
 
-        // Prepare steps data
-        var tempSteps = new List<NumberedStep>();
-        if (recipe?.ParsedData?.steps != null)
-        {
-            tempSteps = recipe.ParsedData.steps.Select((step, index) => new NumberedStep
+            var animationTask = AnimateRecipeTextAsync();
+
+            // Fetch user ingredients
+            AppUser appUser = await _appUserService.GetCurrentUserAsync();
+            var appUserId = appUser.Id;
+
+            IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
+
+            // Convert user ingredients to a string
+            string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
+
+            // Call the MagicRecipeGeneratorService to generate a recipe
+            ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
+
+            Debug.WriteLine($"Hello");
+            Debug.WriteLine(ApiResponse);
+
+            // Parse API response to Recipe object
+            Recipe recipe = ParseRecipe(ApiResponse);
+
+            // Populate UI elements with recipe data
+            PopulateRecipeData(recipe);
+
+            // Parse ingredient names from the JSON response
+            var ingredientNames = ParseIngredientNames(ApiResponse);
+
+            // Set RecipeIngredients
+            RecipeIngredients.Clear();
+            foreach (var ingredient in ingredientNames)
             {
-                StepNumber = $"{index + 1}.",
-                StepText = step
-            }).ToList();
+                RecipeIngredients.Add(ingredient);
+            }
+            OnPropertyChanged(nameof(RecipeIngredients));
+            Debug.WriteLine($"RecipeIngredients: {RecipeIngredients.Count}");
+
+            // Prepare steps data
+            var tempSteps = new List<NumberedStep>();
+            if (recipe?.ParsedData?.steps != null)
+            {
+                tempSteps = recipe.ParsedData.steps.Select((step, index) => new NumberedStep
+                {
+                    StepNumber = $"{index + 1}.",
+                    StepText = step
+                }).ToList();
+            }
+
+            // Update the NumberedStepsCollection
+            NumberedStepsCollection.Clear();
+            foreach (var step in tempSteps)
+            {
+                NumberedStepsCollection.Add(step);
+            }
+
+            // Notify UI that data has changed
+            OnPropertyChanged(nameof(NumberedStepsCollection));
+            Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
+
+            // Stop the animation
+            _isAnimating = false;
         }
-
-        // Update the NumberedStepsCollection
-        NumberedStepsCollection.Clear();
-        foreach (var step in tempSteps)
-        {
-            NumberedStepsCollection.Add(step);
-        }
-
-        // Notify UI that data has changed
-        OnPropertyChanged(nameof(NumberedStepsCollection));
-        Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
-
-        // Stop the animation
-        _isAnimating = false;
-    }
 
         private bool _isAnimating;
 
         private async Task AnimateRecipeTextAsync()
         {
             _isAnimating = true;
-            string baseText = "Generating recipe ";
+            string baseText = "Thinking ";
             int dotCount = 0;
 
             while (_isAnimating)
             {
                 dotCount = (dotCount % 3) + 1;
                 GeneratingAnimation = baseText + new string('.', dotCount);
+                OnPropertyChanged(nameof(GeneratingAnimation));
                 await Task.Delay(500); // Adjust the delay as needed
             }
+
+            // Reset the text to "Generate a recipe" when done
+            GeneratingAnimation = "Generate a recipe";
+            OnPropertyChanged(nameof(GeneratingAnimation));
         }
 
         // Method for parsing the API response to a Recipe object
