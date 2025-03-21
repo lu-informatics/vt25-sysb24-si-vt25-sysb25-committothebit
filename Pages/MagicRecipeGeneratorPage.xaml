@@ -32,18 +32,17 @@
             MinimumWidthRequest="200" 
             Grid.Row="2" />
 
-        <!-- Recipe Name -->
-        <Label
-            Text="{Binding RecipeName, Mode=TwoWay}"
-            FontAttributes="Bold"
-            FontSize="48"
-            TextColor="Black"
-            Margin="30,0,20,10"
-            Grid.Row="3"/>
+        <!-- Recipe Container -->
+        <ScrollView Grid.Row="3" Grid.RowSpan="2">
+            <VerticalStackLayout IsVisible="{Binding IsRecipeVisible}" Spacing="15" Padding="10">
+                <!-- Recipe Name -->
+                <Label
+                    Text="{Binding RecipeName, Mode=TwoWay}"
+                    FontAttributes="Bold"
+                    FontSize="48"
+                    TextColor="Black"
+                    Margin="30,0,20,10"/>
 
-        <ScrollView Grid.Row="4">
-            <VerticalStackLayout Spacing="15" Padding="10">
-                
                 <!-- Vertical Layout for Description and Details -->
                 <VerticalStackLayout Spacing="40">
                     <!-- Recipe Description -->
@@ -120,8 +119,7 @@
                                                     WidthRequest="25" 
                                                     HeightRequest="25"
                                                     HorizontalOptions="Center"
-                                                    VerticalOptions="Center"
-                                                    IsVisible="{Binding IsAvailable}"/>
+                                                    VerticalOptions="Center"/>
 
                                                 <!-- Bottom Border -->
                                                 <BoxView Grid.Row="2" Grid.ColumnSpan="5"

@@ -21,6 +21,7 @@ namespace Informatics.Appetite.ViewModels
         private string _recipeDifficultyLevel;
         private int _recipeCookingTime;
         private int _recipeServings;
+        private bool _isRecipeVisible;
 
         private Recipe _recipe;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
@@ -33,6 +34,7 @@ namespace Informatics.Appetite.ViewModels
             _userIngredientService = userIngredientService;
             _appUserService = appUserService;
             GenerateRecipeCommand = new Command(async () => await GenerateRecipeAsync());
+            IsRecipeVisible = false;
         }
 
         public Recipe Recipe
@@ -115,6 +117,16 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
+        public bool IsRecipeVisible
+        {
+            get => _isRecipeVisible;
+            set
+            {
+                _isRecipeVisible = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<NumberedStep> NumberedStepsCollection { get; } = new();
 
         public ObservableCollection<string> RecipeIngredients { get; } = new();
@@ -182,6 +194,10 @@ namespace Informatics.Appetite.ViewModels
             // Notify UI that data has changed
             OnPropertyChanged(nameof(NumberedStepsCollection));
             Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
+
+            // Display the UI elements
+            IsRecipeVisible = true;
+            OnPropertyChanged(nameof(IsRecipeVisible));
 
             // Stop the animation
             _isAnimating = false;
