@@ -100,7 +100,7 @@
                                             <Grid ColumnDefinitions="2*,*">                                        
                                                 <!-- Ingredient Name in fixed position -->
                                                 <Label Grid.Column="0"
-                                                    Text="{Binding}"
+                                                    Text="{Binding .}"
                                                     FontAttributes="Bold"
                                                     FontSize="18"
                                                     TextColor="Black"
