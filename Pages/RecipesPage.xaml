@@ -1,0 +1,243 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Informatics.Appetite.Pages.RecipesPage"
+             Title="Recipes"
+             BackgroundColor="White">
+             
+    <Grid Padding="15" RowDefinitions="Auto,*">
+        <!-- Static Content: Filters and Header -->
+        <StackLayout Grid.Row="0" Spacing="10">
+            <!-- Filter Section -->
+            <Grid ColumnDefinitions="*,*,*,*,*" HorizontalOptions="FillAndExpand">
+                <!-- Search Bar -->
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <SearchBar Placeholder="Search recipes ..."
+                           Text="{Binding SearchText}"
+                           HorizontalOptions="FillAndExpand"
+                           Grid.Column="0"
+                           PlaceholderColor="Gray"
+                           TextColor="Black" 
+                           FontSize="18"
+                           HeightRequest="40"
+                            VerticalOptions="Center"/>
+                    </Grid>
+
+                <!-- Category Filter -->
+                <StackLayout Orientation="Horizontal" Grid.Column="1" Margin="20">
+                    <Picker x:Name="CategoryPicker"
+                          ItemsSource="{Binding Categories}"
+                          SelectedItem="{Binding SelectedCategory}"
+                          ItemDisplayBinding="{Binding .}"
+                          FontSize="18"
+                          TextColor="Gray"
+                          HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                         WidthRequest="20"
+                         HeightRequest="20"
+                         HorizontalOptions="Start"
+                         VerticalOptions="Center"
+                         Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCategoryIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+
+                <!-- DietTag Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Grid.Column="2" Margin="20">
+                    <Picker x:Name="DietTagPicker"
+                          ItemsSource="{Binding DietTags}"
+                          SelectedItem="{Binding SelectedDietTag}"
+                          ItemDisplayBinding="{Binding .}"
+                          FontSize="18"
+                          TextColor="Gray"
+                          HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                         WidthRequest="20"
+                         HeightRequest="20"
+                         VerticalOptions="Center"
+                         Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnDietTagIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+
+                <!-- CookingTime Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Grid.Column="3" Margin="20">
+                    <Picker x:Name="CookingTimePicker"
+                          ItemsSource="{Binding CookingTimes}"
+                          SelectedItem="{Binding SelectedCookingTime, Mode=TwoWay}"
+                          ItemDisplayBinding="{Binding .}"
+                          FontSize="18"
+                          TextColor="Gray"
+                          HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                         WidthRequest="20"
+                         HeightRequest="20"
+                         VerticalOptions="Center"
+                         Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCookingTimeIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+
+                <!-- Difficulty Filter -->
+                <StackLayout Orientation="Horizontal" Spacing="5" Grid.Column="4" Margin="20">
+                    <Picker x:Name="DifficultyPicker"
+                          ItemsSource="{Binding Difficulties}"
+                          SelectedItem="{Binding SelectedDifficulty}"
+                          ItemDisplayBinding="{Binding .}"
+                          FontSize="18"
+                          TextColor="Gray"
+                          HorizontalOptions="FillAndExpand" />
+                    <Image Source="down.png"
+                         WidthRequest="20"
+                         HeightRequest="20"
+                         VerticalOptions="Center"
+                         Margin="0,0,5,0">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnDifficultyIconTapped"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+            </Grid>
+            
+            <!-- Table Header -->
+            <Grid ColumnDefinitions="*, *, *, *, *" Padding="20" Margin="0,0" BackgroundColor="White">
+                <Label Text="Recipe Name" FontAttributes="Bold" Grid.Column="0" HorizontalOptions="Start" FontSize="24"/>
+                <Label Text="Difficulty" FontAttributes="Bold" Grid.Column="1" HorizontalOptions="Start" FontSize="24"/>
+                <Label Text="Cooking time" FontAttributes="Bold" Grid.Column="2" HorizontalOptions="Start" FontSize="24"/>
+                <Label Text="Diet" FontAttributes="Bold" Grid.Column="3" HorizontalOptions="Start" FontSize="24"/>
+                <Label Text="Ready to Cook" FontAttributes="Bold" Grid.Column="4" HorizontalOptions="Start" FontSize="24"/>
+
+                <BoxView Grid.Row="1" Grid.ColumnSpan="5"
+                    HeightRequest="1"
+                    BackgroundColor="#FFA1A1A1"
+                    VerticalOptions="End"
+                    Margin="0,50,0,0"/>
+            </Grid>
+        </StackLayout>
+
+        <!-- Scrollable CollectionView for Recipes -->
+        <CollectionView x:Name="RecipesList"
+                Grid.Row="1"
+                ItemsSource="{Binding FilteredRecipes}"
+                SelectionMode="None"
+                ItemsUpdatingScrollMode="KeepItemsInView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                        <Grid ColumnDefinitions="*,*,*,*,*" RowDefinitions="Auto, Auto, Auto" Padding="20" BackgroundColor="White">
+                            <!-- Tap on the entire row opens details -->
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                  Command="{Binding Path=BindingContext.OpenRecipeDetailsCommand, Source={x:Reference RecipesList}}"
+                                  CommandParameter="{Binding Id}" />        
+                            </Grid.GestureRecognizers>
+
+                            <!-- Recipe Name -->
+                            <Label Text="{Binding Name}" 
+                                 TextColor="Black" 
+                                 FontSize="18" 
+                                 Grid.Column="0"/>  
+                            <!-- Difficulty -->
+                            <Label Grid.Row="0" Grid.Column="1"
+                                Text="{Binding DifficultyLevel}" 
+                                TextColor="{Binding DifficultyColor}" 
+                                FontSize="18"/>
+                                
+                            <!-- Cooking Time -->
+                            <StackLayout Orientation="Horizontal" Grid.Column="2" VerticalOptions="Center">
+                                <Label Text="{Binding CookingTime, StringFormat='{0} min'}" 
+                                   TextColor="Black" 
+                                   FontSize="18"/>
+                                <Image Source="clock_three.png"
+                                   WidthRequest="20"
+                                   HeightRequest="20"
+                                   Margin="10, 0, 0, 0"/>     
+                            </StackLayout>
+
+                            <!-- Bordered Badge for DietTag -->
+                            <Border Grid.Column="3"
+                                HorizontalOptions="Start">       
+
+                                <!-- Bind the Border's context to DietTag -->
+                                <Border.BindingContext>
+                                    <Binding Path="DietTag" />
+                                </Border.BindingContext>
+
+                                <!-- DataTriggers on the Border to change style based on DietTag value -->
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding}" Value="Vegan">
+                                        <Setter Property="BackgroundColor" Value="#8BC34A" />
+                                        <Setter Property="Stroke" Value="Black" />
+                                        <Setter Property="StrokeThickness" Value="0" />
+                                        <Setter Property="StrokeShape">
+                                            <RoundRectangle CornerRadius="5" />
+                                        </Setter>
+                                    </DataTrigger>
+
+                                    <DataTrigger TargetType="Border" Binding="{Binding}" Value="Vegetarian">
+                                        <Setter Property="BackgroundColor" Value="#4CAF50" />
+                                        <Setter Property="Stroke" Value="Black" />
+                                        <Setter Property="StrokeThickness" Value="0" />
+                                        <Setter Property="StrokeShape">
+                                            <RoundRectangle CornerRadius="5" />
+                                        </Setter>
+                                    </DataTrigger>
+
+                                    <DataTrigger TargetType="Border" Binding="{Binding}" Value="Pescatarian">
+                                        <Setter Property="BackgroundColor" Value="#03A9F4" />
+                                        <Setter Property="Stroke" Value="Black" />
+                                        <Setter Property="StrokeThickness" Value="0" />
+                                        <Setter Property="StrokeShape">
+                                            <RoundRectangle CornerRadius="5" />
+                                        </Setter>
+                                    </DataTrigger>
+
+                                    <DataTrigger TargetType="Border" Binding="{Binding}" Value="Non-Vegetarian">
+                                        <Setter Property="BackgroundColor" Value="#F44336" />
+                                        <Setter Property="Stroke" Value="Black" />
+                                        <Setter Property="StrokeThickness" Value="0" />
+                                        <Setter Property="StrokeShape">
+                                            <RoundRectangle CornerRadius="5" />
+                                        </Setter>
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <!-- Inner Label just shows the text -->
+                                <Label Text="{Binding}"
+                                   TextColor="White"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   Padding="8,2"/>     
+                            </Border>
+
+                            <!-- All is Available -->
+                            <Image Source="checkmark.png"
+                                 Grid.Column="4"
+                                 WidthRequest="40"
+                                 HeightRequest="40"
+                                 HorizontalOptions="Start"
+                                 IsVisible="{Binding HasAllIngredients}"
+                                 VerticalOptions="Center">
+                            </Image>
+
+                            <!-- Bottom Border -->
+                            <BoxView Grid.Row="2" Grid.ColumnSpan="5"
+                                 HeightRequest="1"
+                                 BackgroundColor="#cccccc"
+                                 VerticalOptions="End"
+                                 Margin="0,20,0,0"/>
+                        </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

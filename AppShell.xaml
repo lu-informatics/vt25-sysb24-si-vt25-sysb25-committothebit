@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Informatics.Appetite.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Informatics.Appetite"
+    Title="Informatics.Appetite"
+    Shell.FlyoutBehavior="Locked"
+    Shell.FlyoutWidth="300"
+    Shell.FlyoutBackgroundColor="#e3e3e3">
+
+    <FlyoutItem Title="Recipes" Icon="recipe_logo.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.RecipesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="My Ingredients" Icon="my_ingredients.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.IngredientsPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Magic Recipe Generator" Icon="magic_recipe.png">
+        <ShellContent ContentTemplate="{DataTemplate local:Pages.MagicRecipeGeneratorPage}" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <StackLayout Padding="10" BackgroundColor="Transparent">
+            <Label x:Name="CurrentUserLabel"
+                   Text="Signed in : "
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </StackLayout>
+    </Shell.FlyoutFooter>
+    
+</Shell>

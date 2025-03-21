@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Informatics.Appetite.Pages.IngredientsPage"
+             Title="My Ingredients">
+
+    <!-- Use Grid to Structure Layout -->
+    <Grid RowDefinitions="Auto, *, Auto" Padding="15" RowSpacing="10">
+
+        <!-- Headers Row -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*,*" Padding="10" BackgroundColor="White">
+            <Label Grid.Column="0" Text="Ingredient Name" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+            <Label Grid.Column="1" Text="Category" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="Amount" FontSize="24" FontAttributes="Bold" VerticalOptions="Center" />
+
+            <BoxView Grid.Row="2" Grid.ColumnSpan="4"
+                HeightRequest="1"
+                BackgroundColor="#FFA1A1A1"
+                VerticalOptions="End"
+                Margin="0,50,0,0"/>
+        </Grid>
+
+        <!-- CollectionView (Expands to Fill Remaining Space) -->
+        <CollectionView x:Name="IngredientsList"
+                        ItemsSource="{Binding UserIngredients}"
+                        SelectionMode="Single"
+                        ItemsUpdatingScrollMode="KeepItemsInView"
+                        VerticalOptions="FillAndExpand"
+                        Grid.Row="1">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto,Auto" BackgroundColor="White">
+                        <!-- Ingredient Name -->
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Text="{Binding Ingredient.Name}"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               AutomationId="IngredientName"
+                               TextColor="Black"
+                               VerticalOptions="Center" />
+                        <!-- Ingredient Category -->
+                        <Label Grid.Row="0" Grid.Column="1"
+                               Text="{Binding Ingredient.Category}"
+                               FontSize="18"
+                               AutomationId="IngredientCategory"
+                               TextColor="Gray"
+                               VerticalOptions="Center" />
+                        <!-- Ingredient Amount and Unit -->
+                        <Label Grid.Row="0" Grid.Column="2"
+                               FontSize="18"
+                               AutomationId="IngredientAmount"
+                               TextColor="Black"
+                               VerticalOptions="Center">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} {1}">
+                                    <Binding Path="Amount" />
+                                    <Binding Path="Ingredient.Unit" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                        <!-- Edit Button -->
+
+                        <!-- Delete Button -->
+                        <Button Grid.Row="0" Grid.Column="3"
+                                Text="Delete"
+                                Command="{Binding Path=BindingContext.DeleteUserIngredientCommand, Source={x:Reference IngredientsList}}"
+                                CommandParameter="{Binding .}"
+                                BackgroundColor="#E74C3C"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                Padding="1"
+                                Margin="0,0,5,0"
+                                WidthRequest="100"
+                                VerticalOptions="Center"
+                                BorderWidth="0"/>
+                        <!-- Tap Gesture for Selecting Ingredient -->
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenIngredientDetailsCommand,
+                                                            Source={x:Reference IngredientsList}}"
+                                                  CommandParameter="{Binding Id}"/>
+                        </Grid.GestureRecognizers>
+                        <!-- Bottom Border -->
+                        <BoxView Grid.Row="2" Grid.ColumnSpan="5"
+                                 HeightRequest="1"
+                                 BackgroundColor="#cccccc"
+                                 VerticalOptions="End"
+                                 Margin="0,20,0,0"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <!-- Empty View -->
+            <CollectionView.EmptyView>
+                <Label Text="No ingredients found."
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="16"
+                       FontAttributes="Italic"
+                       TextColor="Gray"/>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <!-- Add Ingredient Button -->
+        <Button Text="Add/Edit Ingredient"
+                Command="{Binding OpenAddIngredientCommand}"
+                HorizontalOptions="Fill"
+                BackgroundColor="#27AE60"
+                TextColor="White"
+                FontAttributes="Bold"
+                CornerRadius="10"
+                Padding="10"
+                Grid.Row="2"/>
+
+    </Grid>
+
+</ContentPage>

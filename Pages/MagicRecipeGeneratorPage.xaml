@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Informatics.Appetite.ViewModels"
+             xmlns:models="clr-namespace:Informatics.Appetite.Models"
+             x:Class="Informatics.Appetite.Pages.MagicRecipeGeneratorPage"
+             x:DataType="vm:MagicRecipeGeneratorViewModel">
+    <Grid Padding="20" RowSpacing="20" RowDefinitions="Auto, Auto, Auto, Auto, *" ColumnDefinitions="*">
+        <Label 
+            Text="No recipe to your liking? No problem!"
+            FontSize="24"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center"
+            Grid.Row="0" />
+        <Label 
+            Text="Let your machine overlords decide what you should cook. Click the button below to generate recipes tailored to the ingredients you have at home!"
+            FontSize="18"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" 
+            Grid.Row="1"
+            MaximumWidthRequest="800" />
+        <Button
+            Text="{Binding GeneratingAnimation}"
+            FontSize="18"
+            FontAttributes="Bold"
+            TextColor="White"
+            BackgroundColor="#FFDF52EF"
+            BorderWidth="0"
+            Command="{Binding GenerateRecipeCommand}"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"
+            MinimumWidthRequest="200" 
+            Grid.Row="2" />
+
+        <!-- Recipe Container -->
+        <ScrollView Grid.Row="3" Grid.RowSpan="2">
+            <VerticalStackLayout IsVisible="{Binding IsRecipeVisible}" Spacing="15" Padding="10">
+                <!-- Recipe Name -->
+                <Label
+                    Text="{Binding RecipeName, Mode=TwoWay}"
+                    FontAttributes="Bold"
+                    FontSize="48"
+                    TextColor="Black"
+                    Margin="30,0,20,10"/>
+
+                <!-- Vertical Layout for Description and Details -->
+                <VerticalStackLayout Spacing="40">
+                    <!-- Recipe Description -->
+                    <Label Text="{Binding RecipeDescription}"
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        TextColor="Black"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Start"
+                        LineBreakMode="WordWrap"
+                        Margin="20,0,20,0"/>
+                    
+                    <!-- Grid for Difficulty, Cooking Time, and Servings -->
+                    <Grid ColumnDefinitions="*,*,*" HorizontalOptions="Fill" Margin="0,0,0,20">
+                        <!-- Difficulty -->
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="Center" Grid.Column="0">
+                            <Image Source="hat_chef.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center"/>
+                            <Label Text="{Binding RecipeDifficultyLevel}"
+                                FontSize="18"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Cooking Time -->
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="Center" Grid.Column="1">
+                            <Image Source="clock_three.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center"/>
+                            <Label Text="{Binding RecipeCookingTime, StringFormat ='{0} minutes'}"
+                                FontSize="18"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+
+                        <!-- Servings -->
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="Center" Grid.Column="2">
+                            <Image Source="plate_utensils.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center"/>
+                            <Label Text="{Binding RecipeServings, StringFormat='{0} portions'}"
+                                FontSize="18"
+                                TextColor="Black"
+                                HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <!-- Grid for Ingredients and Cooking Instructions -->
+                <Grid ColumnDefinitions="*,2*">
+                    <!-- Ingredient List (Read-Only) -->
+                    <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
+                        <VerticalStackLayout Spacing="30" Padding="20">
+                            <Label Text="Ingredients"
+                                HorizontalOptions="Center"
+                                FontAttributes="Bold"
+                                FontSize="24"
+                                TextColor="Black"/>
+                            <CollectionView ItemsSource="{Binding RecipeIngredients}"
+                                            SelectionMode="None"
+                                            VerticalOptions="Fill"
+                                            ItemsUpdatingScrollMode="KeepItemsInView">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Border Stroke="#E0E0E0" StrokeThickness="0" Margin="10">
+                                            <Grid ColumnDefinitions="2*,*">                                        
+                                                <!-- Ingredient Name in fixed position -->
+                                                <Label Grid.Column="0"
+                                                    Text="{Binding}"
+                                                    FontAttributes="Bold"
+                                                    FontSize="18"
+                                                    TextColor="Black"
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Center"/>
+
+                                                <!-- Fixed width column for checkmark -->
+                                                <Image Grid.Column="2"
+                                                    Source="checkmark.png"
+                                                    WidthRequest="25" 
+                                                    HeightRequest="25"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center"/>
+
+                                                <!-- Bottom Border -->
+                                                <BoxView Grid.Row="2" Grid.ColumnSpan="5"
+                                                    HeightRequest="1"
+                                                    BackgroundColor="#cccccc"
+                                                    VerticalOptions="End"
+                                                    Margin="0,20,0,0"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+
+                                <!-- Empty View -->
+                                <CollectionView.EmptyView>
+                                    <Label Text="No ingredients found in this recipe."
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        FontSize="14"
+                                        FontAttributes="Italic"
+                                        TextColor="Gray"/>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <!-- Cooking Instructions -->
+                    <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
+                        <VerticalStackLayout Spacing="30" Padding="20" Grid.Column="1" Margin="20,0,0,0">
+                            <Label Text="Cooking Instructions"
+                                HorizontalOptions="Center"
+                                FontAttributes="Bold"
+                                FontSize="24"
+                                TextColor="Black"/>
+                            <CollectionView ItemsSource="{Binding NumberedStepsCollection}"
+                                            SelectionMode="None"
+                                            HorizontalOptions="Fill">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="20"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:NumberedStep">
+                                        <!-- Single Grid with Correct Column Layout -->
+                                        <Grid ColumnDefinitions="Auto, *">
+                                            <!-- Step Number -->
+                                            <Label Text="{Binding StepNumber}"
+                                                FontSize="18"
+                                                TextColor="Black"
+                                                VerticalTextAlignment="Start"
+                                                Padding="5,0"
+                                                Margin="0,0,5,0"/>
+
+                                            <!-- Step Description -->
+                                            <Label Text="{Binding StepText}"
+                                                FontSize="18"
+                                                TextColor="Black"
+                                                Grid.Column="1"
+                                                VerticalTextAlignment="Start"
+                                                LineBreakMode="WordWrap"
+                                                HorizontalOptions="Fill"
+                                                MaxLines="10"/> <!-- Optional: Limits excessive long steps -->
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <VerticalStackLayout>
+                                            <Label Text="No cooking instructions available."
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            FontSize="24"
+                                                FontAttributes="Italic"
+                                                TextColor="Gray"/>
+                                        <Label Text="{Binding Recipe.Data}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            FontSize="12"
+                                            TextColor="Gray"/>
+                                    </VerticalStackLayout>
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Frame>
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
