@@ -121,72 +121,68 @@ namespace Informatics.Appetite.ViewModels
 
         public ICommand GenerateRecipeCommand { get; }
 
-        private async Task GenerateRecipeAsync()
+    private async Task GenerateRecipeAsync()
+    {
+        var animationTask = AnimateRecipeTextAsync();
+
+        // Fetch user ingredients
+        AppUser appUser = await _appUserService.GetCurrentUserAsync();
+        var appUserId = appUser.Id;
+
+        IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
+
+        // Convert user ingredients to a string
+        string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
+
+        // Call the MagicRecipeGeneratorService to generate a recipe
+        ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
+
+        Debug.WriteLine($"Hello");
+        Debug.WriteLine(ApiResponse);
+
+        // Parse API response to Recipe object
+        Recipe recipe = ParseRecipe(ApiResponse);
+
+        // Populate UI elements with recipe data
+        PopulateRecipeData(recipe);
+
+        // Parse ingredient names from the JSON response
+        var ingredientNames = ParseIngredientNames(ApiResponse);
+
+        // Set RecipeIngredients
+        RecipeIngredients.Clear();
+        foreach (var ingredient in ingredientNames)
         {
-            var animationTask = AnimateRecipeTextAsync();
-
-            // Fetch user ingredients
-            AppUser appUser = await _appUserService.GetCurrentUserAsync();
-            var appUserId = appUser.Id;
-
-            IEnumerable<UserIngredient> userIngredients = await _userIngredientService.GetUserIngredientsByUserIdAsync(appUserId);
-
-            // Convert user ingredients to a string
-            string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
-
-            // Call the MagicRecipeGeneratorService to generate a recipe
-            ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
-
-            Debug.WriteLine($"Hello");
-            Debug.WriteLine(ApiResponse);
-
-            // Parse API response to Recipe object
-            Recipe recipe = ParseRecipe(ApiResponse);
-
-            // Populate UI elements with recipe data
-            RecipeName = recipe.Name;
-            RecipeDescription = recipe.ParsedData?.description;
-            RecipeDifficultyLevel = recipe.DifficultyLevel;
-            RecipeCookingTime = recipe.CookingTime;
-            RecipeServings = recipe.Servings;
-
-            // Parse ingredient names from the JSON response
-            var jsonDocument = JsonDocument.Parse(ApiResponse);
-            var ingredientNames = jsonDocument.RootElement.GetProperty("ingredientNames").EnumerateArray().Select(x => x.GetString()).ToList();
-
-            // Set RecipeIngredients
-            RecipeIngredients.Clear();
-            foreach (var ingredient in ingredientNames)
-            {
-                RecipeIngredients.Add(ingredient);
-            }
-            Debug.WriteLine($"RecipeIngredients: {RecipeIngredients.Count}");
-
-            // Prepare steps data
-            var tempSteps = new List<NumberedStep>();
-            if (recipe?.ParsedData?.steps != null)
-            {
-                tempSteps = recipe.ParsedData.steps.Select((step, index) => new NumberedStep
-                {
-                    StepNumber = $"{index + 1}.",
-                    StepText = step
-                }).ToList();
-            }
-
-            // Update the NumberedStepsCollection
-            NumberedStepsCollection.Clear();
-            foreach (var step in tempSteps)
-            {
-                NumberedStepsCollection.Add(step);
-            }
-
-            // Notify UI that data has changed
-            OnPropertyChanged(nameof(NumberedStepsCollection));
-            Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
-
-            // Stop the animation
-            _isAnimating = false;
+            RecipeIngredients.Add(ingredient);
         }
+        OnPropertyChanged(nameof(RecipeIngredients));
+        Debug.WriteLine($"RecipeIngredients: {RecipeIngredients.Count}");
+
+        // Prepare steps data
+        var tempSteps = new List<NumberedStep>();
+        if (recipe?.ParsedData?.steps != null)
+        {
+            tempSteps = recipe.ParsedData.steps.Select((step, index) => new NumberedStep
+            {
+                StepNumber = $"{index + 1}.",
+                StepText = step
+            }).ToList();
+        }
+
+        // Update the NumberedStepsCollection
+        NumberedStepsCollection.Clear();
+        foreach (var step in tempSteps)
+        {
+            NumberedStepsCollection.Add(step);
+        }
+
+        // Notify UI that data has changed
+        OnPropertyChanged(nameof(NumberedStepsCollection));
+        Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
+
+        // Stop the animation
+        _isAnimating = false;
+    }
 
         private bool _isAnimating;
 
@@ -227,16 +223,36 @@ namespace Informatics.Appetite.ViewModels
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Parsed recipe is null.");
+                    Debug.WriteLine("Parsed recipe is null.");
                 }
 
                 return recipe ?? new Recipe();
             }
-            catch (Exception ex)
+            catch (JsonException ex)
             {
-                System.Diagnostics.Debug.WriteLine($"JSON Parse Error: {ex.Message}");
+                Debug.WriteLine($"JSON Parse Error: {ex.Message}");
                 return new Recipe();
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected Error: {ex.Message}");
+                return new Recipe();
+            }
+        }
+
+        private List<string> ParseIngredientNames(string apiResponse)
+        {
+            var jsonDocument = JsonDocument.Parse(apiResponse);
+            return jsonDocument.RootElement.GetProperty("ingredientNames").EnumerateArray().Select(x => x.GetString()).ToList();
+        }
+
+        private void PopulateRecipeData(Recipe recipe)
+        {
+            RecipeName = recipe.Name;
+            RecipeDescription = recipe.ParsedData?.description;
+            RecipeDifficultyLevel = recipe.DifficultyLevel;
+            RecipeCookingTime = recipe.CookingTime;
+            RecipeServings = recipe.Servings;
         }
     }
 }

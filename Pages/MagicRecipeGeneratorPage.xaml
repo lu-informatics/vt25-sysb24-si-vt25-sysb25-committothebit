@@ -95,12 +95,12 @@
                                             VerticalOptions="Fill"
                                             ItemsUpdatingScrollMode="KeepItemsInView">
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="x:String">
                                         <Border Stroke="#E0E0E0" StrokeThickness="0" Margin="10">
                                             <Grid ColumnDefinitions="2*,*">                                        
                                                 <!-- Ingredient Name in fixed position -->
                                                 <Label Grid.Column="0"
-                                                    Text="{Binding .}"
+                                                    Text="{Binding}"
                                                     FontAttributes="Bold"
                                                     FontSize="18"
                                                     TextColor="Black"
