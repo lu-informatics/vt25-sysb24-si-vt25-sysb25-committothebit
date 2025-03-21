@@ -14,13 +14,14 @@ namespace Informatics.Appetite.ViewModels
 {
     public class MagicRecipeGeneratorViewModel : BindableObject
     {
-        private string _recipeText;
+        private string _apiResponse;
+        private string _generatingAnimation = "Generate a recipe";
         private string _recipeName;
         private string _recipeDescription;
         private string _recipeDifficultyLevel;
         private int _recipeCookingTime;
         private int _recipeServings;
-        private string _recipeIngredients;
+        private bool _isRecipeVisible;
 
         private Recipe _recipe;
         private readonly IMagicRecipeGeneratorService _magicRecipeGeneratorService;
@@ -33,6 +34,7 @@ namespace Informatics.Appetite.ViewModels
             _userIngredientService = userIngredientService;
             _appUserService = appUserService;
             GenerateRecipeCommand = new Command(async () => await GenerateRecipeAsync());
+            IsRecipeVisible = false;
         }
 
         public Recipe Recipe
@@ -45,16 +47,26 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
-        public string RecipeText
+        public string GeneratingAnimation
         {
-            get => _recipeText;
+            get => _generatingAnimation;
             set
             {
-                _recipeText = value;
+                _generatingAnimation = value;
                 OnPropertyChanged();
             }
         }
 
+        public string ApiResponse
+        {
+            get => _apiResponse;
+            set
+            {
+                _apiResponse = value;
+                OnPropertyChanged();
+            }
+        }
+        
         public string RecipeName
         {
             get => _recipeName;
@@ -105,22 +117,27 @@ namespace Informatics.Appetite.ViewModels
             }
         }
 
-        public string RecipeIngredients
+        public bool IsRecipeVisible
         {
-            get => _recipeIngredients;
+            get => _isRecipeVisible;
             set
             {
-                _recipeIngredients = value;
+                _isRecipeVisible = value;
                 OnPropertyChanged();
             }
         }
 
         public ObservableCollection<NumberedStep> NumberedStepsCollection { get; } = new();
 
+        public ObservableCollection<string> RecipeIngredients { get; } = new();
+
         public ICommand GenerateRecipeCommand { get; }
 
         private async Task GenerateRecipeAsync()
         {
+            GeneratingAnimation = "Thinking";
+            OnPropertyChanged(nameof(GeneratingAnimation));
+
             var animationTask = AnimateRecipeTextAsync();
 
             // Fetch user ingredients
@@ -133,21 +150,28 @@ namespace Informatics.Appetite.ViewModels
             string ingredientsList = string.Join(", ", userIngredients.Select(ui => ui.Ingredient?.Name));
 
             // Call the MagicRecipeGeneratorService to generate a recipe
-            RecipeText = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
+            ApiResponse = await _magicRecipeGeneratorService.GenerateRecipeAsync(ingredientsList);
 
             Debug.WriteLine($"Hello");
-            Debug.WriteLine(RecipeText);
+            Debug.WriteLine(ApiResponse);
 
             // Parse API response to Recipe object
-            Recipe recipe = ParseRecipe(RecipeText);
+            Recipe recipe = ParseRecipe(ApiResponse);
 
             // Populate UI elements with recipe data
-            RecipeName = recipe.Name;
-            RecipeDescription = recipe.ParsedData?.description;
-            RecipeDifficultyLevel = recipe.DifficultyLevel;
-            RecipeCookingTime = recipe.CookingTime;
-            RecipeServings = recipe.Servings;
-            RecipeIngredients = "Testing...";
+            PopulateRecipeData(recipe);
+
+            // Parse ingredient names from the JSON response
+            var ingredientNames = ParseIngredientNames(ApiResponse);
+
+            // Set RecipeIngredients
+            RecipeIngredients.Clear();
+            foreach (var ingredient in ingredientNames)
+            {
+                RecipeIngredients.Add(ingredient);
+            }
+            OnPropertyChanged(nameof(RecipeIngredients));
+            Debug.WriteLine($"RecipeIngredients: {RecipeIngredients.Count}");
 
             // Prepare steps data
             var tempSteps = new List<NumberedStep>();
@@ -171,6 +195,10 @@ namespace Informatics.Appetite.ViewModels
             OnPropertyChanged(nameof(NumberedStepsCollection));
             Debug.WriteLine($"NumberedSteps: {NumberedStepsCollection.Count}");
 
+            // Display the UI elements
+            IsRecipeVisible = true;
+            OnPropertyChanged(nameof(IsRecipeVisible));
+
             // Stop the animation
             _isAnimating = false;
         }
@@ -180,15 +208,20 @@ namespace Informatics.Appetite.ViewModels
         private async Task AnimateRecipeTextAsync()
         {
             _isAnimating = true;
-            string baseText = "Generating recipe ";
+            string baseText = "Thinking ";
             int dotCount = 0;
 
             while (_isAnimating)
             {
                 dotCount = (dotCount % 3) + 1;
-                RecipeText = baseText + new string('.', dotCount);
+                GeneratingAnimation = baseText + new string('.', dotCount);
+                OnPropertyChanged(nameof(GeneratingAnimation));
                 await Task.Delay(500); // Adjust the delay as needed
             }
+
+            // Reset the text to "Generate a recipe" when done
+            GeneratingAnimation = "Generate a recipe";
+            OnPropertyChanged(nameof(GeneratingAnimation));
         }
 
         // Method for parsing the API response to a Recipe object
@@ -214,16 +247,36 @@ namespace Informatics.Appetite.ViewModels
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("Parsed recipe is null.");
+                    Debug.WriteLine("Parsed recipe is null.");
                 }
 
                 return recipe ?? new Recipe();
             }
-            catch (Exception ex)
+            catch (JsonException ex)
             {
-                System.Diagnostics.Debug.WriteLine($"JSON Parse Error: {ex.Message}");
+                Debug.WriteLine($"JSON Parse Error: {ex.Message}");
                 return new Recipe();
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Unexpected Error: {ex.Message}");
+                return new Recipe();
+            }
+        }
+
+        private List<string> ParseIngredientNames(string apiResponse)
+        {
+            var jsonDocument = JsonDocument.Parse(apiResponse);
+            return jsonDocument.RootElement.GetProperty("ingredientNames").EnumerateArray().Select(x => x.GetString()).ToList();
+        }
+
+        private void PopulateRecipeData(Recipe recipe)
+        {
+            RecipeName = recipe.Name;
+            RecipeDescription = recipe.ParsedData?.description;
+            RecipeDifficultyLevel = recipe.DifficultyLevel;
+            RecipeCookingTime = recipe.CookingTime;
+            RecipeServings = recipe.Servings;
         }
     }
 }

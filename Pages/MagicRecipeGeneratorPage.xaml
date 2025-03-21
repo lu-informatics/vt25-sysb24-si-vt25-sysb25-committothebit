@@ -5,38 +5,44 @@
              xmlns:models="clr-namespace:Informatics.Appetite.Models"
              x:Class="Informatics.Appetite.Pages.MagicRecipeGeneratorPage"
              x:DataType="vm:MagicRecipeGeneratorViewModel">
-    <Grid Padding="20" RowDefinitions="Auto, Auto, Auto, Auto, *" ColumnDefinitions="*">
+    <Grid Padding="20" RowSpacing="20" RowDefinitions="Auto, Auto, Auto, Auto, *" ColumnDefinitions="*">
         <Label 
-            Text="Click the button below to generate a random recipe!"
+            Text="No recipe to your liking? No problem!"
             FontSize="24"
             VerticalOptions="Center" 
-            HorizontalOptions="Center" 
+            HorizontalOptions="Center"
             Grid.Row="0" />
         <Label 
-            Text="{Binding RecipeText}"
+            Text="Let your machine overlords decide what you should cook. Click the button below to generate recipes tailored to the ingredients you have at home!"
             FontSize="18"
             VerticalOptions="Center" 
-            HorizontalOptions="Start" 
-            Grid.Row="1" />
+            HorizontalOptions="Center" 
+            Grid.Row="1"
+            MaximumWidthRequest="800" />
         <Button
-            Text="Generate Recipe"
+            Text="{Binding GeneratingAnimation}"
+            FontSize="18"
+            FontAttributes="Bold"
+            TextColor="White"
+            BackgroundColor="#FFDF52EF"
+            BorderWidth="0"
             Command="{Binding GenerateRecipeCommand}"
             VerticalOptions="Center"
-            HorizontalOptions="Center" 
+            HorizontalOptions="Center"
+            MinimumWidthRequest="200" 
             Grid.Row="2" />
 
-        <!-- Recipe Name -->
-        <Label
-            Text="{Binding RecipeName, Mode=TwoWay}"
-            FontAttributes="Bold"
-            FontSize="48"
-            TextColor="Black"
-            Margin="30,0,20,10"
-            Grid.Row="3"/>
+        <!-- Recipe Container -->
+        <ScrollView Grid.Row="3" Grid.RowSpan="2">
+            <VerticalStackLayout IsVisible="{Binding IsRecipeVisible}" Spacing="15" Padding="10">
+                <!-- Recipe Name -->
+                <Label
+                    Text="{Binding RecipeName, Mode=TwoWay}"
+                    FontAttributes="Bold"
+                    FontSize="48"
+                    TextColor="Black"
+                    Margin="30,0,20,10"/>
 
-        <ScrollView Grid.Row="4">
-            <VerticalStackLayout Spacing="15" Padding="10">
-                
                 <!-- Vertical Layout for Description and Details -->
                 <VerticalStackLayout Spacing="40">
                     <!-- Recipe Description -->
@@ -84,8 +90,9 @@
                 <Grid ColumnDefinitions="*,2*">
                     <!-- Ingredient List (Read-Only) -->
                     <Frame Grid.Column="0" BackgroundColor="AliceBlue" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
-                        <VerticalStackLayout Spacing="15" Padding="20">
+                        <VerticalStackLayout Spacing="30" Padding="20">
                             <Label Text="Ingredients"
+                                HorizontalOptions="Center"
                                 FontAttributes="Bold"
                                 FontSize="24"
                                 TextColor="Black"/>
@@ -94,39 +101,25 @@
                                             VerticalOptions="Fill"
                                             ItemsUpdatingScrollMode="KeepItemsInView">
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="x:String">
                                         <Border Stroke="#E0E0E0" StrokeThickness="0" Margin="10">
-                                            <Grid ColumnDefinitions="2*,*,*">                                        
+                                            <Grid ColumnDefinitions="2*,*">                                        
                                                 <!-- Ingredient Name in fixed position -->
                                                 <Label Grid.Column="0"
-                                                    Text="{Binding Ingredient.Name}"
+                                                    Text="{Binding}"
                                                     FontAttributes="Bold"
                                                     FontSize="18"
                                                     TextColor="Black"
                                                     HorizontalOptions="Start"
                                                     VerticalOptions="Center"/>
-                                                
-                                                <!-- Amount at the end -->
-                                                <Label Grid.Column="1"
-                                                    HorizontalOptions="Start"
-                                                    VerticalOptions="Center"
-                                                    FontSize="18">
-                                                    <Label.Text>
-                                                        <MultiBinding StringFormat="{}{0} {1}">
-                                                            <Binding Path="Amount" />
-                                                            <Binding Path="Ingredient.Unit" />
-                                                        </MultiBinding>
-                                                    </Label.Text>
-                                                </Label>
 
                                                 <!-- Fixed width column for checkmark -->
                                                 <Image Grid.Column="2"
                                                     Source="checkmark.png"
                                                     WidthRequest="25" 
                                                     HeightRequest="25"
-                                                    HorizontalOptions="End"
-                                                    VerticalOptions="Center"
-                                                    IsVisible="{Binding IsAvailable}"/>
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center"/>
 
                                                 <!-- Bottom Border -->
                                                 <BoxView Grid.Row="2" Grid.ColumnSpan="5"
@@ -154,8 +147,9 @@
 
                     <!-- Cooking Instructions -->
                     <Frame Grid.Column="1" BackgroundColor="BlanchedAlmond" CornerRadius="15" Padding="0" BorderColor="Transparent" Margin="20,0,20,0">
-                        <VerticalStackLayout Spacing="20" Padding="20" Grid.Column="1" Margin="20,0,0,0">
+                        <VerticalStackLayout Spacing="30" Padding="20" Grid.Column="1" Margin="20,0,0,0">
                             <Label Text="Cooking Instructions"
+                                HorizontalOptions="Center"
                                 FontAttributes="Bold"
                                 FontSize="24"
                                 TextColor="Black"/>
@@ -191,12 +185,12 @@
                                 </CollectionView.ItemTemplate>
                                 <CollectionView.EmptyView>
                                     <VerticalStackLayout>
-                                        <Label Text="No cooking instructions available."
+                                            <Label Text="No cooking instructions available."
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center"
                                             FontSize="24"
-                                            FontAttributes="Italic"
-                                            TextColor="Gray"/>
+                                                FontAttributes="Italic"
+                                                TextColor="Gray"/>
                                         <Label Text="{Binding Recipe.Data}"
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center"
